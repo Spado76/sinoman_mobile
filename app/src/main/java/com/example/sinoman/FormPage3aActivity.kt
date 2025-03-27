@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.google.android.material.textfield.TextInputLayout
 
 class FormPage3aActivity : AppCompatActivity() {
 
@@ -19,30 +20,33 @@ class FormPage3aActivity : AppCompatActivity() {
     private lateinit var landSizeSpinner: Spinner
     private lateinit var certificateTypeSpinner: Spinner
     private lateinit var financingInterestSpinner: Spinner
-    private lateinit var saveButton: Button
     private lateinit var submitButton: Button
-    private lateinit var formData: FormData
+    private lateinit var registration: RegistrationData
     private var formChanged = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_form_page3a)
 
+        // Get registration ID from intent
+        val registrationId = intent.getStringExtra("registration_id")
+            ?: throw IllegalArgumentException("Registration ID is required")
+
+        // Load registration data
+        registration = RegistrationData.getRegistration(this, registrationId)
+            ?: throw IllegalArgumentException("Registration not found")
+
         // Initialize views
         buildingSizeSpinner = findViewById(R.id.buildingSizeSpinner)
         landSizeSpinner = findViewById(R.id.landSizeSpinner)
         certificateTypeSpinner = findViewById(R.id.certificateTypeSpinner)
         financingInterestSpinner = findViewById(R.id.financingInterestSpinner)
-        saveButton = findViewById(R.id.saveButton)
         submitButton = findViewById(R.id.submitButton)
 
         // Set up toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        // Load saved form data
-        formData = FormData.load(this)
 
         // Set up spinners
         setupSpinners()
@@ -54,16 +58,14 @@ class FormPage3aActivity : AppCompatActivity() {
         setupFormChangeListeners()
 
         // Set up button click listeners
-        saveButton.setOnClickListener {
-            saveFormData()
-            Toast.makeText(this, "Data berhasil disimpan", Toast.LENGTH_SHORT).show()
-        }
-
         submitButton.setOnClickListener {
-            saveFormData()
-            // TODO: Send data to database
-            Toast.makeText(this, "Data berhasil dikirim", Toast.LENGTH_SHORT).show()
-            finish()
+            if (validateForm()) {
+                saveFormData()
+                registration.status = RegistrationStatus.UNDER_REVIEW
+                RegistrationData.addOrUpdateRegistration(this, registration)
+                Toast.makeText(this, "Data berhasil dikirim", Toast.LENGTH_SHORT).show()
+                finish()
+            }
         }
     }
 
@@ -115,33 +117,33 @@ class FormPage3aActivity : AppCompatActivity() {
 
     private fun populateFormWithData() {
         // Set spinner selections based on saved data
-        if (formData.buildingSize.isNotBlank()) {
+        if (registration.buildingSize.isNotBlank()) {
             val buildingSizes = resources.getStringArray(R.array.building_sizes)
-            val position = buildingSizes.indexOf(formData.buildingSize)
+            val position = buildingSizes.indexOf(registration.buildingSize)
             if (position >= 0) {
                 buildingSizeSpinner.setSelection(position)
             }
         }
 
-        if (formData.landSize.isNotBlank()) {
+        if (registration.landSize.isNotBlank()) {
             val landSizes = resources.getStringArray(R.array.land_sizes)
-            val position = landSizes.indexOf(formData.landSize)
+            val position = landSizes.indexOf(registration.landSize)
             if (position >= 0) {
                 landSizeSpinner.setSelection(position)
             }
         }
 
-        if (formData.certificateType.isNotBlank()) {
+        if (registration.certificateType.isNotBlank()) {
             val certificateTypes = resources.getStringArray(R.array.certificate_types)
-            val position = certificateTypes.indexOf(formData.certificateType)
+            val position = certificateTypes.indexOf(registration.certificateType)
             if (position >= 0) {
                 certificateTypeSpinner.setSelection(position)
             }
         }
 
-        if (formData.financingInterest.isNotBlank()) {
+        if (registration.financingInterest.isNotBlank()) {
             val financingInterests = resources.getStringArray(R.array.financing_interests)
-            val position = financingInterests.indexOf(formData.financingInterest)
+            val position = financingInterests.indexOf(registration.financingInterest)
             if (position >= 0) {
                 financingInterestSpinner.setSelection(position)
             }
@@ -191,13 +193,39 @@ class FormPage3aActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveFormData() {
-        formData.buildingSize = buildingSizeSpinner.selectedItem.toString()
-        formData.landSize = landSizeSpinner.selectedItem.toString()
-        formData.certificateType = certificateTypeSpinner.selectedItem.toString()
-        formData.financingInterest = financingInterestSpinner.selectedItem.toString()
+    private fun validateForm(): Boolean {
+        // All fields are required
+        if (buildingSizeSpinner.selectedItem == null) {
+            Toast.makeText(this, "Pilih luas bangunan/rumah", Toast.LENGTH_SHORT).show()
+            return false
+        }
 
-        FormData.save(this, formData)
+        if (landSizeSpinner.selectedItem == null) {
+            Toast.makeText(this, "Pilih luas tanah/lahan", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (certificateTypeSpinner.selectedItem == null) {
+            Toast.makeText(this, "Pilih jenis sertifikat", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (financingInterestSpinner.selectedItem == null) {
+            Toast.makeText(this, "Pilih minat bantuan pembiayaan", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
+
+    private fun saveFormData() {
+        registration.buildingSize = buildingSizeSpinner.selectedItem.toString()
+        registration.landSize = landSizeSpinner.selectedItem.toString()
+        registration.certificateType = certificateTypeSpinner.selectedItem.toString()
+        registration.financingInterest = financingInterestSpinner.selectedItem.toString()
+        registration.dateUpdated = System.currentTimeMillis()
+
+        RegistrationData.addOrUpdateRegistration(this, registration)
         formChanged = false
     }
 

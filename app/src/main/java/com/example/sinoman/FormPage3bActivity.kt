@@ -20,14 +20,21 @@ class FormPage3bActivity : AppCompatActivity() {
     private lateinit var citySpinner: Spinner
     private lateinit var districtSpinner: Spinner
     private lateinit var villageSpinner: Spinner
-    private lateinit var saveButton: Button
     private lateinit var submitButton: Button
-    private lateinit var formData: FormData
+    private lateinit var registration: RegistrationData
     private var formChanged = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_form_page3b)
+
+        // Get registration ID from intent
+        val registrationId = intent.getStringExtra("registration_id")
+            ?: throw IllegalArgumentException("Registration ID is required")
+
+        // Load registration data
+        registration = RegistrationData.getRegistration(this, registrationId)
+            ?: throw IllegalArgumentException("Registration not found")
 
         // Initialize views
         houseInterestSpinner = findViewById(R.id.houseInterestSpinner)
@@ -35,16 +42,12 @@ class FormPage3bActivity : AppCompatActivity() {
         citySpinner = findViewById(R.id.citySpinner)
         districtSpinner = findViewById(R.id.districtSpinner)
         villageSpinner = findViewById(R.id.villageSpinner)
-        saveButton = findViewById(R.id.saveButton)
         submitButton = findViewById(R.id.submitButton)
 
         // Set up toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        // Load saved form data
-        formData = FormData.load(this)
 
         // Set up spinners
         setupSpinners()
@@ -56,16 +59,14 @@ class FormPage3bActivity : AppCompatActivity() {
         setupFormChangeListeners()
 
         // Set up button click listeners
-        saveButton.setOnClickListener {
-            saveFormData()
-            Toast.makeText(this, "Data berhasil disimpan", Toast.LENGTH_SHORT).show()
-        }
-
         submitButton.setOnClickListener {
-            saveFormData()
-            // TODO: Send data to database
-            Toast.makeText(this, "Data berhasil dikirim", Toast.LENGTH_SHORT).show()
-            finish()
+            if (validateForm()) {
+                saveFormData()
+                registration.status = RegistrationStatus.UNDER_REVIEW
+                RegistrationData.addOrUpdateRegistration(this, registration)
+                Toast.makeText(this, "Data berhasil dikirim", Toast.LENGTH_SHORT).show()
+                finish()
+            }
         }
     }
 
@@ -118,41 +119,41 @@ class FormPage3bActivity : AppCompatActivity() {
 
     private fun populateFormWithData() {
         // Set spinner selections based on saved data
-        if (formData.houseInterest.isNotBlank()) {
+        if (registration.houseInterest.isNotBlank()) {
             val houseInterests = resources.getStringArray(R.array.house_interests)
-            val position = houseInterests.indexOf(formData.houseInterest)
+            val position = houseInterests.indexOf(registration.houseInterest)
             if (position >= 0) {
                 houseInterestSpinner.setSelection(position)
             }
         }
 
-        if (formData.locationProvince.isNotBlank()) {
+        if (registration.locationProvince.isNotBlank()) {
             val provinces = resources.getStringArray(R.array.provinces)
-            val position = provinces.indexOf(formData.locationProvince)
+            val position = provinces.indexOf(registration.locationProvince)
             if (position >= 0) {
                 provinceSpinner.setSelection(position)
             }
         }
 
-        if (formData.locationCity.isNotBlank()) {
+        if (registration.locationCity.isNotBlank()) {
             val cities = resources.getStringArray(R.array.cities)
-            val position = cities.indexOf(formData.locationCity)
+            val position = cities.indexOf(registration.locationCity)
             if (position >= 0) {
                 citySpinner.setSelection(position)
             }
         }
 
-        if (formData.locationDistrict.isNotBlank()) {
+        if (registration.locationDistrict.isNotBlank()) {
             val districts = resources.getStringArray(R.array.districts)
-            val position = districts.indexOf(formData.locationDistrict)
+            val position = districts.indexOf(registration.locationDistrict)
             if (position >= 0) {
                 districtSpinner.setSelection(position)
             }
         }
 
-        if (formData.locationVillage.isNotBlank()) {
+        if (registration.locationVillage.isNotBlank()) {
             val villages = resources.getStringArray(R.array.villages)
-            val position = villages.indexOf(formData.locationVillage)
+            val position = villages.indexOf(registration.locationVillage)
             if (position >= 0) {
                 villageSpinner.setSelection(position)
             }
@@ -212,14 +213,45 @@ class FormPage3bActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveFormData() {
-        formData.houseInterest = houseInterestSpinner.selectedItem.toString()
-        formData.locationProvince = provinceSpinner.selectedItem.toString()
-        formData.locationCity = citySpinner.selectedItem.toString()
-        formData.locationDistrict = districtSpinner.selectedItem.toString()
-        formData.locationVillage = villageSpinner.selectedItem.toString()
+    private fun validateForm(): Boolean {
+        // All fields are required
+        if (houseInterestSpinner.selectedItem == null) {
+            Toast.makeText(this, "Pilih minat rumah dan tanah", Toast.LENGTH_SHORT).show()
+            return false
+        }
 
-        FormData.save(this, formData)
+        if (provinceSpinner.selectedItem == null) {
+            Toast.makeText(this, "Pilih provinsi", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (citySpinner.selectedItem == null) {
+            Toast.makeText(this, "Pilih kabupaten/kota", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (districtSpinner.selectedItem == null) {
+            Toast.makeText(this, "Pilih kecamatan", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (villageSpinner.selectedItem == null) {
+            Toast.makeText(this, "Pilih desa/kelurahan", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
+
+    private fun saveFormData() {
+        registration.houseInterest = houseInterestSpinner.selectedItem.toString()
+        registration.locationProvince = provinceSpinner.selectedItem.toString()
+        registration.locationCity = citySpinner.selectedItem.toString()
+        registration.locationDistrict = districtSpinner.selectedItem.toString()
+        registration.locationVillage = villageSpinner.selectedItem.toString()
+        registration.dateUpdated = System.currentTimeMillis()
+
+        RegistrationData.addOrUpdateRegistration(this, registration)
         formChanged = false
     }
 

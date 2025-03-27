@@ -355,10 +355,10 @@
                 android:spinnerMode="dropdown" />
 
             <Button
-                android:id="@+id/nextButton"
+                android:id="@+id/saveButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Lanjut" />
+                android:text="Simpan" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

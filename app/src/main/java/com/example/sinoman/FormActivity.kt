@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
@@ -18,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -27,17 +27,23 @@ import java.util.Locale
 class FormActivity : AppCompatActivity() {
 
     private lateinit var nameEditText: TextInputEditText
+    private lateinit var nameInputLayout: TextInputLayout
     private lateinit var nikEditText: TextInputEditText
+    private lateinit var nikInputLayout: TextInputLayout
     private lateinit var nikPhotoButton: Button
     private lateinit var nikPhotoNameTextView: TextView
     private lateinit var npwpEditText: TextInputEditText
+    private lateinit var npwpInputLayout: TextInputLayout
     private lateinit var npwpPhotoButton: Button
     private lateinit var npwpPhotoNameTextView: TextView
     private lateinit var familyCardEditText: TextInputEditText
+    private lateinit var familyCardInputLayout: TextInputLayout
     private lateinit var familyCardPhotoButton: Button
     private lateinit var familyCardPhotoNameTextView: TextView
     private lateinit var currentAddressEditText: TextInputEditText
+    private lateinit var currentAddressInputLayout: TextInputLayout
     private lateinit var hometownAddressEditText: TextInputEditText
+    private lateinit var hometownAddressInputLayout: TextInputLayout
     private lateinit var genderSpinner: Spinner
     private lateinit var maritalStatusSpinner: Spinner
     private lateinit var childrenSpinner: Spinner
@@ -46,7 +52,7 @@ class FormActivity : AppCompatActivity() {
     private lateinit var incomeSpinner: Spinner
     private lateinit var allowanceSpinner: Spinner
     private lateinit var expensesSpinner: Spinner
-    private lateinit var nextButton: Button
+    private lateinit var saveButton: Button
 
     private var formData = FormData()
     private var formChanged = false
@@ -99,27 +105,37 @@ class FormActivity : AppCompatActivity() {
         // Set up photo buttons
         setupPhotoButtons()
 
-        // Set up next button
-        nextButton.setOnClickListener {
-            saveFormData()
-            val intent = Intent(this, FormPage2Activity::class.java)
-            startActivity(intent)
+        // Set up save button
+        saveButton.setOnClickListener {
+            if (validateForm()) {
+                saveFormData()
+                FormData.setPersonalDataCompleted(this, true)
+                val intent = Intent(this, FormPage2Activity::class.java)
+                startActivity(intent)
+                finish() // Close this activity so user can't go back with back button
+            }
         }
     }
 
     private fun initializeViews() {
         nameEditText = findViewById(R.id.nameEditText)
+        nameInputLayout = findViewById(R.id.nameInputLayout)
         nikEditText = findViewById(R.id.nikEditText)
+        nikInputLayout = findViewById(R.id.nikInputLayout)
         nikPhotoButton = findViewById(R.id.nikPhotoButton)
         nikPhotoNameTextView = findViewById(R.id.nikPhotoNameTextView)
         npwpEditText = findViewById(R.id.npwpEditText)
+        npwpInputLayout = findViewById(R.id.npwpInputLayout)
         npwpPhotoButton = findViewById(R.id.npwpPhotoButton)
         npwpPhotoNameTextView = findViewById(R.id.npwpPhotoNameTextView)
         familyCardEditText = findViewById(R.id.familyCardEditText)
+        familyCardInputLayout = findViewById(R.id.familyCardInputLayout)
         familyCardPhotoButton = findViewById(R.id.familyCardPhotoButton)
         familyCardPhotoNameTextView = findViewById(R.id.familyCardPhotoNameTextView)
         currentAddressEditText = findViewById(R.id.currentAddressEditText)
+        currentAddressInputLayout = findViewById(R.id.currentAddressInputLayout)
         hometownAddressEditText = findViewById(R.id.hometownAddressEditText)
+        hometownAddressInputLayout = findViewById(R.id.hometownAddressInputLayout)
         genderSpinner = findViewById(R.id.genderSpinner)
         maritalStatusSpinner = findViewById(R.id.maritalStatusSpinner)
         childrenSpinner = findViewById(R.id.childrenSpinner)
@@ -128,7 +144,7 @@ class FormActivity : AppCompatActivity() {
         incomeSpinner = findViewById(R.id.incomeSpinner)
         allowanceSpinner = findViewById(R.id.allowanceSpinner)
         expensesSpinner = findViewById(R.id.expensesSpinner)
-        nextButton = findViewById(R.id.nextButton)
+        saveButton = findViewById(R.id.saveButton)
     }
 
     private fun setupSpinners() {
@@ -329,38 +345,56 @@ class FormActivity : AppCompatActivity() {
 
     private fun setupFormChangeListeners() {
         nameEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus && nameEditText.text.toString() != formData.name) {
-                formChanged = true
+            if (!hasFocus) {
+                validateField(nameInputLayout, nameEditText.text.toString())
+                if (nameEditText.text.toString() != formData.name) {
+                    formChanged = true
+                }
             }
         }
 
         nikEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus && nikEditText.text.toString() != formData.nik) {
-                formChanged = true
+            if (!hasFocus) {
+                validateField(nikInputLayout, nikEditText.text.toString())
+                if (nikEditText.text.toString() != formData.nik) {
+                    formChanged = true
+                }
             }
         }
 
         npwpEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus && npwpEditText.text.toString() != formData.npwp) {
-                formChanged = true
+            if (!hasFocus) {
+                validateField(npwpInputLayout, npwpEditText.text.toString())
+                if (npwpEditText.text.toString() != formData.npwp) {
+                    formChanged = true
+                }
             }
         }
 
         familyCardEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus && familyCardEditText.text.toString() != formData.familyCardNumber) {
-                formChanged = true
+            if (!hasFocus) {
+                validateField(familyCardInputLayout, familyCardEditText.text.toString())
+                if (familyCardEditText.text.toString() != formData.familyCardNumber) {
+                    formChanged = true
+                }
             }
         }
 
         currentAddressEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus && currentAddressEditText.text.toString() != formData.currentAddress) {
-                formChanged = true
+            if (!hasFocus) {
+                validateField(currentAddressInputLayout, currentAddressEditText.text.toString())
+                if (currentAddressEditText.text.toString() != formData.currentAddress) {
+                    formChanged = true
+                }
             }
         }
 
         hometownAddressEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus && hometownAddressEditText.text.toString() != formData.hometownAddress) {
-                formChanged = true
+            if (!hasFocus) {
+                validateField(hometownAddressInputLayout, hometownAddressEditText.text.toString())
+                if (hometownAddressEditText.text.toString() != formData.hometownAddress) {
+                    formChanged = true
+                }
             }
         }
 
@@ -444,6 +478,49 @@ class FormActivity : AppCompatActivity() {
                 // Do nothing
             }
         }
+    }
+
+    private fun validateField(inputLayout: TextInputLayout, value: String): Boolean {
+        return if (value.isBlank()) {
+            inputLayout.error = "Field ini harus diisi"
+            false
+        } else {
+            inputLayout.error = null
+            true
+        }
+    }
+
+    private fun validateForm(): Boolean {
+        var isValid = true
+
+        // Validate text fields
+        if (!validateField(nameInputLayout, nameEditText.text.toString())) isValid = false
+        if (!validateField(nikInputLayout, nikEditText.text.toString())) isValid = false
+        if (!validateField(npwpInputLayout, npwpEditText.text.toString())) isValid = false
+        if (!validateField(familyCardInputLayout, familyCardEditText.text.toString())) isValid = false
+        if (!validateField(currentAddressInputLayout, currentAddressEditText.text.toString())) isValid = false
+        if (!validateField(hometownAddressInputLayout, hometownAddressEditText.text.toString())) isValid = false
+
+        // Validate photos
+        if (formData.nikPhotoPath.isBlank()) {
+            Toast.makeText(this, "Foto NIK harus diupload", Toast.LENGTH_SHORT).show()
+            isValid = false
+        }
+        if (formData.npwpPhotoPath.isBlank()) {
+            Toast.makeText(this, "Foto NPWP harus diupload", Toast.LENGTH_SHORT).show()
+            isValid = false
+        }
+        if (formData.familyCardPhotoPath.isBlank()) {
+            Toast.makeText(this, "Foto KK harus diupload", Toast.LENGTH_SHORT).show()
+            isValid = false
+        }
+
+        return isValid
+    }
+
+    private fun updateCompletionProgress() {
+        // This method is kept for compatibility but doesn't update UI anymore
+        // The completion percentage is now only shown in the dashboard
     }
 
     private fun saveFormData() {

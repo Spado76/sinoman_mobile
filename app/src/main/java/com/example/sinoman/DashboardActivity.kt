@@ -15,7 +15,6 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import androidx.core.content.edit
 
 class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -56,7 +55,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         // Set up navigation listeners
         navigationView.setNavigationItemSelectedListener(this)
-        
+
         // Set up header click listeners
         val headerView = navigationView.getHeaderView(0)
         headerView.findViewById<View>(R.id.profileImageView).setOnClickListener {
@@ -98,7 +97,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun updateUI() {
         val formData = FormData.load(this)
-        val completionPercentage = FormData.calculateCompletionPercentage(formData)
+        val completionPercentage = FormData.calculatePersonalDataCompletionPercentage(formData)
 
         // Update percentage text and progress bar
         percentageTextView.text = "$completionPercentage%"
@@ -120,7 +119,11 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun navigateToForm() {
-        startActivity(Intent(this, FormActivity::class.java))
+        if (FormData.isPersonalDataCompleted(this)) {
+            startActivity(Intent(this, FormPage2Activity::class.java))
+        } else {
+            startActivity(Intent(this, FormActivity::class.java))
+        }
     }
 
     private fun navigateToProfile() {
@@ -132,8 +135,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_logout -> {
                 // Clear user session and navigate to login
                 val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                prefs.edit() { clear() }
-                
+                prefs.edit().clear().apply()
+
                 val intent = Intent(this, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
