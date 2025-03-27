@@ -1,0 +1,166 @@
+<resources>
+    <string name="app_name">Sinoman</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Form Spinner Arrays -->
+    <string-array name="genders">
+        <item>Laki-laki</item>
+        <item>Perempuan</item>
+    </string-array>
+
+    <string-array name="marital_statuses">
+        <item>Menikah</item>
+        <item>Belum menikah</item>
+        <item>Cerai hidup</item>
+        <item>Cerai mati</item>
+    </string-array>
+
+    <string-array name="children_options">
+        <item>1 anak</item>
+        <item>2 anak</item>
+        <item>3 anak</item>
+        <item>4 anak atau lebih</item>
+    </string-array>
+
+    <string-array name="education_options">
+        <item>Diploma 1/2/3</item>
+        <item>Strata 1</item>
+        <item>Strata 2</item>
+        <item>Strata 3</item>
+    </string-array>
+
+    <string-array name="occupations">
+        <item>TNI</item>
+        <item>Polri</item>
+        <item>ASN</item>
+        <item>Pegawai BUMN/Swasta</item>
+        <item>Pedagang</item>
+        <item>Peternak</item>
+        <item>Perajin</item>
+        <item>Petani</item>
+        <item>Buruh bangunan</item>
+        <item>Tenaga kebersihan</item>
+    </string-array>
+
+    <string-array name="income_ranges">
+        <item>0-1.2 juta</item>
+        <item>1.2-1.8 juta</item>
+        <item>1.8-2.1 juta</item>
+        <item>2.1-2.6 juta</item>
+        <item>2.6-3.1 juta</item>
+        <item>3.1-3.6 juta</item>
+        <item>3.6-4.2 juta</item>
+        <item>4.2-5.2 juta</item>
+        <item>5.2-7 juta</item>
+        <item>7-13.9 juta</item>
+    </string-array>
+
+    <string-array name="allowance_ranges">
+        <item>0-1.2 juta</item>
+        <item>1.2-1.8 juta</item>
+        <item>1.8-2.1 juta</item>
+        <item>2.1-2.6 juta</item>
+        <item>2.6-3.1 juta</item>
+        <item>3.1-3.6 juta</item>
+        <item>3.6-4.2 juta</item>
+        <item>4.2-5.2 juta</item>
+        <item>5.2-7 juta</item>
+        <item>lebih dari 7 juta</item>
+    </string-array>
+
+    <string-array name="expenses_ranges">
+        <item>0-1.2 juta</item>
+        <item>1.2-1.4 juta</item>
+        <item>1.4-1.6 juta</item>
+        <item>1.6-1.8 juta</item>
+        <item>1.8-2.1 juta</item>
+        <item>2.1-2.3 juta</item>
+        <item>2.3-2.7 juta</item>
+        <item>2.7-3.2 juta</item>
+        <item>3.2-4.3 juta</item>
+        <item>lebih dari 4.3 juta</item>
+    </string-array>
+
+    <string-array name="building_sizes">
+        <item>Tipe 23</item>
+        <item>Tipe 54</item>
+        <item>Tipe diatas 72</item>
+    </string-array>
+
+    <string-array name="land_sizes">
+        <item>0-36 meter persegi</item>
+        <item>36-72 meter persegi</item>
+        <item>72-108 meter persegi</item>
+        <item>lebih dari 108 meter persegi</item>
+    </string-array>
+
+    <string-array name="certificate_types">
+        <item>Hak Milik (SHM)</item>
+        <item>Hak Guna Bangunan (SHGB)</item>
+        <item>Hak Satuan Rumah Susun (SHSRS)</item>
+        <item>Girik atau Petok</item>
+        <item>Akte Jual Beli (AJB)</item>
+        <item>Acte van Eigendom</item>
+    </string-array>
+
+    <string-array name="financing_interests">
+        <item>Peningkatan luas bangunan</item>
+        <item>perbaikan atap rumah</item>
+        <item>perbaikan dinding rumah</item>
+        <item>perbaikan lantai rumah</item>
+        <item>penyediaan air minum/bersih</item>
+        <item>perbaikan/penyediaan sanitasi</item>
+        <item>perbaikan/penyediaan listrik</item>
+    </string-array>
+
+    <string-array name="house_interests">
+        <item>Rumah tapak</item>
+        <item>Rumah susun</item>
+        <item>Rumah milik</item>
+        <item>Rumah sewa</item>
+        <item>Rumah tipe 21</item>
+        <item>Rumah tipe 36</item>
+        <item>Rumah tipe 45</item>
+        <item>Rumah tipe 54</item>
+        <item>Rumah tipe 60</item>
+        <item>Rumah tipe diatas 72</item>
+        <item>Tanah 0-36 meter persegi</item>
+        <item>Tanah 36-72 meter persegi</item>
+        <item>Tanah 72-108 meter persegi</item>
+        <item>Tanah diatas 108 meter persegi</item>
+    </string-array>
+
+    <string-array name="provinces">
+        <item>Jawa Barat</item>
+        <item>Jawa Tengah</item>
+        <item>Jawa Timur</item>
+        <item>DKI Jakarta</item>
+        <item>Banten</item>
+    </string-array>
+
+    <string-array name="cities">
+        <item>Kota Bandung</item>
+        <item>Kota Bekasi</item>
+        <item>Kota Bogor</item>
+        <item>Kota Depok</item>
+        <item>Kota Cimahi</item>
+    </string-array>
+
+    <string-array name="districts">
+        <item>Kecamatan A</item>
+        <item>Kecamatan B</item>
+        <item>Kecamatan C</item>
+        <item>Kecamatan D</item>
+        <item>Kecamatan E</item>
+    </string-array>
+
+    <string-array name="villages">
+        <item>Desa/Kelurahan 1</item>
+        <item>Desa/Kelurahan 2</item>
+        <item>Desa/Kelurahan 3</item>
+        <item>Desa/Kelurahan 4</item>
+        <item>Desa/Kelurahan 5</item>
+    </string-array>
+</resources>
+
