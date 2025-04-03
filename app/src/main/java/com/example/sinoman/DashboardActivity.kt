@@ -77,6 +77,10 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     navigateToProfile()
                     true
                 }
+                R.id.nav_notifications -> {
+                    startActivity(Intent(this, NotificationsActivity::class.java))
+                    true
+                }
                 else -> false
             }
         }
@@ -132,6 +136,9 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.nav_about -> {
+                startActivity(Intent(this, AboutActivity::class.java))
+            }
             R.id.nav_logout -> {
                 // Clear user session and navigate to login
                 val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)

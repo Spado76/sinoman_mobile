@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Sinoman.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="2dp">
+    android:layout_marginBottom="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Pendaftaran Bantuan Punya Rumah"
+            android:textColor="@color/dark_blue"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -27,16 +27,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="Status: On Progress"
+            android:textColor="@color/black"
             android:textSize="14sp" />
 
         <Button
             android:id="@+id/deleteButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            style="@style/Widget.Sinoman.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:text="Hapus"
-            android:textColor="@android:color/holo_red_dark" />
+            android:textColor="@color/error" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
 

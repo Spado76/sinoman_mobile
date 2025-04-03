@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import android.widget.Button
-import androidx.core.content.edit
 
 class LoginActivity : AppCompatActivity() {
 
@@ -43,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
                 if (AuthUtils.loginUser(email, password)) {
                     // Save user session
                     val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                    prefs.edit { putString("email", email) }
+                    prefs.edit().putString("email", email).apply()
 
                     try {
                         // Navigate to dashboard with explicit intent

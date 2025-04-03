@@ -1,2 +1,92 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.Sinoman" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/dark_blue</item>
+        <item name="colorPrimaryVariant">@color/dark_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/golden_brown</item>
+        <item name="colorSecondaryVariant">@color/golden_brown</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/dark_blue</item>
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnBackground">@color/black</item>
+        <item name="colorOnSurface">@color/black</item>
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/dark_gray</item>
+        <!-- Component styles -->
+        <item name="materialButtonStyle">@style/Widget.Sinoman.Button</item>
+        <item name="textInputStyle">@style/Widget.Sinoman.TextInputLayout</item>
+        <item name="cardViewStyle">@style/Widget.Sinoman.CardView</item>
+    </style>
+
+    <!-- Primary Button style -->
+    <style name="Widget.Sinoman.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/golden_brown</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="cornerRadius">4dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!-- Secondary Button style -->
+    <style name="Widget.Sinoman.Button.Secondary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/dark_blue</item>
+        <item name="android:textColor">@color/dark_blue</item>
+        <item name="cornerRadius">4dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!-- Text Button style -->
+    <style name="Widget.Sinoman.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/dark_blue</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!-- Text Input Layout style -->
+    <style name="Widget.Sinoman.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/dark_blue</item>
+        <item name="hintTextColor">@color/dark_blue</item>
+        <item name="boxStrokeWidth">1dp</item>
+    </style>
+
+    <!-- Card style -->
+    <style name="Widget.Sinoman.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/white</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeColor">@color/dark_blue</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cardCornerRadius">4dp</item>
+    </style>
+
+    <!-- Toolbar style -->
+    <style name="Widget.Sinoman.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">@color/dark_blue</item>
+        <item name="titleTextColor">@color/white</item>
+    </style>
+
+    <!-- Bottom Navigation style -->
+    <style name="Widget.Sinoman.BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/dark_blue</item>
+        <item name="itemIconTint">@color/white</item>
+        <item name="itemTextColor">@color/white</item>
+    </style>
+
+    <!-- Spinner style -->
+    <style name="Widget.Sinoman.Spinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/spinner_background</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+    </style>
+</resources>
+

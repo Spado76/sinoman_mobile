@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ProfileActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -12,11 +13,9 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            style="@style/Widget.Sinoman.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:title="Profil" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -24,6 +23,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -33,11 +33,10 @@
             android:padding="16dp">
 
             <androidx.cardview.widget.CardView
+                style="@style/Widget.Sinoman.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -58,6 +57,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="User Name"
+                        android:textColor="@color/dark_blue"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -67,15 +67,15 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="user@example.com"
+                        android:textColor="@color/black"
                         android:textSize="16sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                style="@style/Widget.Sinoman.CardView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -88,6 +88,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:text="Informasi Pribadi"
+                        android:textColor="@color/dark_blue"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -96,6 +97,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="Nama Lengkap"
+                        android:textColor="@color/dark_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -105,6 +107,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:text="User Full Name"
+                        android:textColor="@color/black"
                         android:textSize="16sp" />
 
                     <TextView
@@ -112,6 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="Alamat"
+                        android:textColor="@color/dark_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -121,6 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:text="User Address"
+                        android:textColor="@color/black"
                         android:textSize="16sp" />
 
                     <TextView
@@ -128,6 +133,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="Nomor Telepon"
+                        android:textColor="@color/dark_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -136,6 +142,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="User Phone Number"
+                        android:textColor="@color/black"
                         android:textSize="16sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -144,6 +151,7 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
+        style="@style/Widget.Sinoman.BottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"

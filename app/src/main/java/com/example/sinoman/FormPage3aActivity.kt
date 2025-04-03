@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.example.sinoman.utils.NotificationManager
 import com.google.android.material.textfield.TextInputLayout
 
 class FormPage3aActivity : AppCompatActivity() {
@@ -63,6 +64,8 @@ class FormPage3aActivity : AppCompatActivity() {
                 saveFormData()
                 registration.status = RegistrationStatus.UNDER_REVIEW
                 RegistrationData.addOrUpdateRegistration(this, registration)
+                // Add notification for form submission
+                NotificationManager.notifyRegistrationSubmitted(this, registration)
                 Toast.makeText(this, "Data berhasil dikirim", Toast.LENGTH_SHORT).show()
                 finish()
             }
