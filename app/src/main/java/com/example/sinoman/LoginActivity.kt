@@ -14,6 +14,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var passwordEditText: TextInputEditText
     private lateinit var loginButton: Button
     private lateinit var registerButton: Button
+    private lateinit var forgotPasswordButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
             passwordEditText = findViewById(R.id.passwordEditText)
             loginButton = findViewById(R.id.loginButton)
             registerButton = findViewById(R.id.registerButton)
+            forgotPasswordButton = findViewById(R.id.forgotPasswordButton)
 
             // Set up login button click listener
             loginButton.setOnClickListener {
@@ -34,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
                 val password = passwordEditText.text.toString().trim()
 
                 if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Mohon isi semua kolom", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
@@ -55,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 } else {
-                    Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Email atau kata sandi tidak valid", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -63,6 +65,12 @@ class LoginActivity : AppCompatActivity() {
             registerButton.setOnClickListener {
                 val intent = Intent(this, RegisterActivity::class.java)
                 startActivity(intent)
+            }
+
+            // Set up forgot password button click listener
+            forgotPasswordButton.setOnClickListener {
+                Toast.makeText(this, "Fitur lupa kata sandi akan segera hadir", Toast.LENGTH_SHORT).show()
+                // Functionality will be implemented later
             }
         } catch (e: Exception) {
             Log.e("LoginActivity", "Error in onCreate", e)

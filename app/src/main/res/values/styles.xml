@@ -27,8 +27,8 @@
 
     <!-- Primary Button style -->
     <style name="Widget.Sinoman.Button" parent="Widget.MaterialComponents.Button">
-        <item name="backgroundTint">@color/golden_brown</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="backgroundTint">@color/button_background_selector</item>
+        <item name="android:textColor">@color/button_text_selector</item>
         <item name="cornerRadius">4dp</item>
         <item name="android:paddingTop">12dp</item>
         <item name="android:paddingBottom">12dp</item>
@@ -37,8 +37,8 @@
 
     <!-- Secondary Button style -->
     <style name="Widget.Sinoman.Button.Secondary" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="strokeColor">@color/dark_blue</item>
-        <item name="android:textColor">@color/dark_blue</item>
+        <item name="strokeColor">@color/outline_button_stroke_selector</item>
+        <item name="android:textColor">@color/outline_button_text_selector</item>
         <item name="cornerRadius">4dp</item>
         <item name="android:paddingTop">12dp</item>
         <item name="android:paddingBottom">12dp</item>

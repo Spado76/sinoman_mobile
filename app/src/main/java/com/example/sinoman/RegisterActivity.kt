@@ -12,6 +12,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var nameEditText: TextInputEditText
     private lateinit var phoneEditText: TextInputEditText
     private lateinit var passwordEditText: TextInputEditText
+    private lateinit var confirmPasswordEditText: TextInputEditText
     private lateinit var registerButton: Button
     private lateinit var backToLoginButton: Button
     
@@ -24,6 +25,7 @@ class RegisterActivity : AppCompatActivity() {
         nameEditText = findViewById(R.id.nameEditText)
         phoneEditText = findViewById(R.id.phoneEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
+        confirmPasswordEditText = findViewById(R.id.confirmPasswordEditText)
         registerButton = findViewById(R.id.registerButton)
         backToLoginButton = findViewById(R.id.backToLoginButton)
         
@@ -33,9 +35,20 @@ class RegisterActivity : AppCompatActivity() {
             val name = nameEditText.text.toString().trim()
             val phone = phoneEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
-            
-            if (email.isEmpty() || name.isEmpty() || phone.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Tidak boleh ada bidang yang kosong!", Toast.LENGTH_SHORT).show()
+            val confirmPassword = confirmPasswordEditText.text.toString().trim()
+
+            if (email.isEmpty() || name.isEmpty() || phone.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                Toast.makeText(this, "Mohon isi semua kolom", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (password != confirmPassword) {
+                Toast.makeText(this, "Kata sandi tidak cocok", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (password.length < 8) {
+                Toast.makeText(this, "Kata sandi minimal 8 karakter", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             

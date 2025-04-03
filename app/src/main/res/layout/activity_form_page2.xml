@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".FormPage2Activity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -12,11 +13,9 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            style="@style/Widget.Sinoman.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:title="Pendaftaran Bantuan" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -24,6 +23,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -34,11 +34,10 @@
 
             <!-- Personal Data Section -->
             <androidx.cardview.widget.CardView
+                style="@style/Widget.Sinoman.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -51,6 +50,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:text="Data Pribadi"
+                        android:textColor="@color/dark_blue"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -58,17 +58,18 @@
                         android:id="@+id/editPersonalDataButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Edit Data Pribadi" />
+                        android:backgroundTint="@color/button_background_selector"
+                        android:text="Edit Data Pribadi"
+                        android:textColor="@color/button_text_selector" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <!-- Registration Buttons Section -->
             <androidx.cardview.widget.CardView
+                style="@style/Widget.Sinoman.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -81,6 +82,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:text="Pendaftaran Bantuan"
+                        android:textColor="@color/dark_blue"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -89,22 +91,25 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:text="Pendaftaran Bantuan Punya Rumah" />
+                        android:backgroundTint="@color/button_background_selector"
+                        android:text="Pendaftaran Bantuan Punya Rumah"
+                        android:textColor="@color/button_text_selector" />
 
                     <Button
                         android:id="@+id/nonHouseOwnerButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Pendaftaran Bantuan Tidak Punya Rumah" />
+                        android:backgroundTint="@color/button_background_selector"
+                        android:text="Pendaftaran Bantuan Tidak Punya Rumah"
+                        android:textColor="@color/button_text_selector" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <!-- Registrations List Section -->
             <androidx.cardview.widget.CardView
+                style="@style/Widget.Sinoman.CardView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -117,6 +122,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:text="Daftar Pendaftaran Bantuan"
+                        android:textColor="@color/dark_blue"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -126,6 +132,7 @@
                         android:layout_height="wrap_content"
                         android:text="Belum ada pendaftaran bantuan"
                         android:textAlignment="center"
+                        android:textColor="@color/black"
                         android:visibility="visible" />
 
                     <androidx.recyclerview.widget.RecyclerView
