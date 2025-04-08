@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default screen margins -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    
+    <!-- Toolbar dimensions -->
+    <dimen name="toolbar_title_margin_start">16dp</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
+    
+    <!-- Responsive toolbar padding for different screen sizes -->
+    <dimen name="toolbar_padding_small">8dp</dimen>
+    <dimen name="toolbar_padding_normal">12dp</dimen>
+    <dimen name="toolbar_padding_large">16dp</dimen>
+</resources>

@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sinoman.model.Notification
-import com.example.sinoman.model.NotificationType
 import com.example.sinoman.utils.NotificationManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.text.SimpleDateFormat
