@@ -23,6 +23,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import android.os.Handler
+import android.os.Looper
+import androidx.viewpager2.widget.ViewPager2
+import com.example.sinoman.adapters.CarouselAdapter
+import com.example.sinoman.model.CarouselItem
+import java.util.Timer
+import java.util.TimerTask
+import android.widget.Toast
 
 class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -61,6 +69,16 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         const val ASSISTANCE_WITH_HOME = 1
         const val ASSISTANCE_WITHOUT_HOME = 2
     }
+
+    // Carousel properties
+    private lateinit var carouselViewPager: ViewPager2
+    private lateinit var indicatorContainer: LinearLayout
+    private lateinit var carouselAdapter: CarouselAdapter
+    private val carouselItems = mutableListOf<CarouselItem>()
+    private var currentPage = 0
+    private val CAROUSEL_DELAY = 3000L // 3 seconds
+    private var timer: Timer? = null
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -146,12 +164,110 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         // Load recent activities
         loadRecentActivities()
+
+        // Set up carousel
+        setupCarousel()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopAutoScroll()
     }
 
     override fun onResume() {
         super.onResume()
         updateUI()
         loadRecentActivities() // Refresh activities when returning to the dashboard
+        startAutoScroll() // Restart auto-scrolling when activity resumes
+    }
+    private fun setupCarousel() {
+        // Initialize carousel items
+        carouselItems.clear()
+        carouselItems.add(CarouselItem(R.drawable.carousel_image1, "Program Bantuan Perumahan"))
+        carouselItems.add(CarouselItem(R.drawable.carousel_image2, "Panduan Pengajuan Bantuan"))
+        carouselItems.add(CarouselItem(R.drawable.carousel_image3, "Tips Renovasi Rumah"))
+
+        // Initialize ViewPager2
+        carouselViewPager = findViewById(R.id.imageCarouselViewPager)
+        indicatorContainer = findViewById(R.id.indicatorContainer)
+
+        // Set up adapter
+        carouselAdapter = CarouselAdapter(carouselItems) { item ->
+            // Handle item click
+            // For example, show a toast or navigate to a detail page
+            Toast.makeText(this, item.title, Toast.LENGTH_SHORT).show()
+        }
+
+        carouselViewPager.adapter = carouselAdapter
+
+        // Set up page change callback
+        carouselViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                currentPage = position
+                updateIndicators(position)
+            }
+        })
+
+        // Set up indicators
+        setupIndicators()
+
+        // Start auto-scrolling
+        startAutoScroll()
+    }
+
+    private fun setupIndicators() {
+        indicatorContainer.removeAllViews()
+
+        val indicators = Array(carouselItems.size) { ImageView(this) }
+
+        val layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        layoutParams.setMargins(8, 0, 8, 0)
+
+        for (i in indicators.indices) {
+            indicators[i].setImageResource(
+                if (i == 0) R.drawable.indicator_active
+                else R.drawable.indicator_inactive
+            )
+            indicators[i].layoutParams = layoutParams
+            indicatorContainer.addView(indicators[i])
+        }
+    }
+
+    private fun updateIndicators(position: Int) {
+        val childCount = indicatorContainer.childCount
+        for (i in 0 until childCount) {
+            val imageView = indicatorContainer.getChildAt(i) as ImageView
+            imageView.setImageResource(
+                if (i == position) R.drawable.indicator_active
+                else R.drawable.indicator_inactive
+            )
+        }
+    }
+
+    private fun startAutoScroll() {
+        timer?.cancel()
+        timer = Timer()
+        timer?.schedule(object : TimerTask() {
+            override fun run() {
+                handler.post {
+                    if (currentPage == carouselItems.size - 1) {
+                        currentPage = 0
+                    } else {
+                        currentPage++
+                    }
+                    carouselViewPager.setCurrentItem(currentPage, true)
+                }
+            }
+        }, CAROUSEL_DELAY, CAROUSEL_DELAY)
+    }
+
+
+    private fun stopAutoScroll() {
+        timer?.cancel()
+        timer = null
     }
 
     private fun updateUI() {

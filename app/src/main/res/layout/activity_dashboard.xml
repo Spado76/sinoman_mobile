@@ -494,6 +494,13 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
+                <!-- Image Carousel Section -->
+                <include
+                    layout="@layout/section_image_carousel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp" />
+
                 <!-- Recent Activities Section -->
                 <include
                     layout="@layout/section_recent_activities"
@@ -510,6 +517,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             app:menu="@menu/bottom_navigation_menu" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

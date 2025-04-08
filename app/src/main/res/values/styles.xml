@@ -35,10 +35,14 @@
 
     <!-- Bottom Navigation style -->
     <style name="Widget.Sinoman.BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
-        <item name="android:background">@color/golden_brown</item>
-        <item name="itemIconTint">@color/dark_blue</item>
-        <item name="itemTextColor">@color/dark_blue</item>
+        <item name="android:background">@drawable/bottom_nav_background</item>
+        <item name="itemIconTint">@color/bottom_nav_item_color</item>
+        <item name="itemTextColor">@color/bottom_nav_item_color</item>
+        <item name="itemRippleColor">@color/dark_blue_lighter</item>
         <item name="elevation">8dp</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemPaddingTop">8dp</item>
+        <item name="itemPaddingBottom">8dp</item>
     </style>
 
     <!-- Card style -->
