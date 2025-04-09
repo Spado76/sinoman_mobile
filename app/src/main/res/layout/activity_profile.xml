@@ -33,102 +33,164 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <androidx.cardview.widget.CardView
-                style="@style/Widget.Sinoman.CardView"
+            <!-- Profile Image Section -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="24dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profileImageView"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/ic_launcher_foreground" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/changePhotoButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="-8dp"
+                    android:layout_marginBottom="-4dp"
+                    android:contentDescription="Change profile photo"
+                    app:backgroundTint="@color/dark_blue"
+                    app:fabSize="mini"
+                    app:srcCompat="@android:drawable/ic_menu_camera"
+                    app:tint="@color/white" />
+            </FrameLayout>
+
+            <!-- Profile Form -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:orientation="vertical">
 
-                <LinearLayout
+                <!-- Nama Pengguna Field -->
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_marginBottom="8dp"
+                    android:text="Nama Pengguna"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="16sp" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/profileImageView"
-                        android:layout_width="96dp"
-                        android:layout_height="96dp"
-                        android:src="@drawable/ic_launcher_foreground" />
-
-                    <TextView
-                        android:id="@+id/userNameTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="User Name"
-                        android:textColor="@color/dark_blue"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/userEmailTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="user@example.com"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                style="@style/Widget.Sinoman.CardView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Sinoman.TextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_marginBottom="16dp">
 
-                    <TextView
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/usernameEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:text="Informasi Pribadi"
-                        android:textColor="@color/dark_blue"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:inputType="textPersonName" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                    <TextView
+                <!-- Email Field (Non-editable) -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Email"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/emailTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_non_editable_field"
+                    android:padding="12dp"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
+                    tools:text="user@example.com" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/light_gray" />
+
+                <!-- No Telepon Field (Non-editable) -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="No Telepon"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/phoneTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_non_editable_field"
+                    android:padding="12dp"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
+                    tools:text="081234567890" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/light_gray" />
+
+                <!-- Tentang Saya Field -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Tentang Saya"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="16sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Sinoman.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/aboutMeEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="Username"
-                        android:textColor="@color/dark_blue"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:gravity="top"
+                        android:inputType="textMultiLine"
+                        android:lines="4" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                    <TextView
-                        android:id="@+id/fullNameTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:text="User Full Name"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
+                <!-- Action Buttons (Initially Hidden) -->
+                <LinearLayout
+                    android:id="@+id/actionButtonsLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <Button
+                        android:id="@+id/cancelButton"
+                        style="@style/Widget.Sinoman.Button.OutlinedButton"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="Nomor Telepon"
-                        android:textColor="@color/dark_blue"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:text="Batalkan" />
 
-                    <TextView
-                        android:id="@+id/phoneTextView"
-                        android:layout_width="match_parent"
+                    <Button
+                        android:id="@+id/saveButton"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="User Phone Number"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/dark_blue"
+                        android:text="Simpan Perubahan"
+                        android:textColor="@color/white" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -144,4 +206,3 @@
         app:menu="@menu/bottom_navigation_menu" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
