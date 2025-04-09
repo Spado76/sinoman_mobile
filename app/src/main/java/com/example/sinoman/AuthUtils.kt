@@ -17,5 +17,29 @@ object AuthUtils {
         // For this example, we'll just return true to simulate successful registration
         return true
     }
+    // Get user data for the logged in user
+    fun getUserData(email: String): UserData {
+        // For this example, we'll return hardcoded data for the admin user
+        return if (email == "admin@gmail.com") {
+            UserData(
+                name = "Admin Firman",
+                email = email,
+                phone = "012345"
+            )
+        } else {
+            UserData(
+                name = "User",
+                email = email,
+                phone = ""
+            )
+        }
+    }
 }
+
+// Data class to hold user information
+data class UserData(
+    val name: String,
+    val email: String,
+    val phone: String
+)
 

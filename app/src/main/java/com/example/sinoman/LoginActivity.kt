@@ -42,9 +42,12 @@ class LoginActivity : AppCompatActivity() {
 
                 // Check credentials
                 if (AuthUtils.loginUser(email, password)) {
+                    // Get user data
+                    val userData = AuthUtils.getUserData(email)
+
                     // Save user session
                     val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                    prefs.edit().putString("email", email).apply()
+                    prefs.edit().putString("email", email).putString("user_name", userData.name).apply()
 
                     try {
                         // Navigate to dashboard with explicit intent

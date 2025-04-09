@@ -1,7 +1,10 @@
 package com.example.sinoman
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -10,27 +13,32 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import com.example.sinoman.adapters.CarouselAdapter
+import com.example.sinoman.adapters.ReminderAdapter
+import com.example.sinoman.model.CarouselItem
 import com.example.sinoman.model.Notification
 import com.example.sinoman.model.NotificationType
+import com.example.sinoman.model.ReminderItem
+import com.example.sinoman.model.ReminderType
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.concurrent.TimeUnit
-import android.os.Handler
-import android.os.Looper
-import androidx.viewpager2.widget.ViewPager2
-import com.example.sinoman.adapters.CarouselAdapter
-import com.example.sinoman.model.CarouselItem
 import java.util.Timer
 import java.util.TimerTask
-import android.widget.Toast
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -40,7 +48,6 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     // Dashboard UI elements
     private lateinit var welcomeTextView: TextView
-    private lateinit var queuePositionTextView: TextView
     private lateinit var verificationStatusTextView: TextView
     private lateinit var statusBgView: View
     private lateinit var statusIconView: ImageView
@@ -59,6 +66,17 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var recentActivitiesContainer: LinearLayout
     private lateinit var viewAllActivitiesButton: TextView
 
+    // Reminder Cards
+    private lateinit var reminderRecyclerView: RecyclerView
+    private val reminderItems = mutableListOf<ReminderItem>()
+    private lateinit var reminderAdapter: ReminderAdapter
+
+    // Shortcut Buttons
+    private lateinit var checkQueueButton: CardView
+    private lateinit var appGuideButton: CardView
+    private lateinit var newDestinationButton: CardView
+    private lateinit var helpButton: CardView
+
     // Verification status constants
     companion object {
         const val STATUS_NOT_REGISTERED = 0
@@ -68,6 +86,10 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         const val ASSISTANCE_NONE = 0
         const val ASSISTANCE_WITH_HOME = 1
         const val ASSISTANCE_WITHOUT_HOME = 2
+
+        // Shared preferences keys for reminders
+        const val PREF_REMINDERS = "reminders_prefs"
+        const val KEY_DISMISSED_REMINDERS = "dismissed_reminders"
     }
 
     // Carousel properties
@@ -91,7 +113,6 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         // Initialize dashboard UI elements
         welcomeTextView = findViewById(R.id.welcomeTextView)
-        queuePositionTextView = findViewById(R.id.queuePositionTextView)
         verificationStatusTextView = findViewById(R.id.verificationStatusTextView)
         statusBgView = findViewById(R.id.statusBgView)
         statusIconView = findViewById(R.id.statusIconView)
@@ -109,6 +130,18 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         // Initialize recent activities section
         recentActivitiesContainer = findViewById(R.id.recentActivitiesContainer)
         viewAllActivitiesButton = findViewById(R.id.viewAllActivitiesButton)
+
+        // Initialize reminder recycler view
+        reminderRecyclerView = findViewById(R.id.reminderRecyclerView)
+        setupReminderRecyclerView()
+
+        // Initialize shortcut buttons
+        val shortcutSection = findViewById<View>(R.id.shortcutSection)
+        checkQueueButton = shortcutSection.findViewById(R.id.checkQueueButton)
+        appGuideButton = shortcutSection.findViewById(R.id.appGuideButton)
+        newDestinationButton = shortcutSection.findViewById(R.id.newDestinationButton)
+        helpButton = shortcutSection.findViewById(R.id.helpButton)
+        setupShortcutButtons()
 
         // Set up toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -150,6 +183,11 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
+                R.id.nav_help -> {
+                    // Handle help navigation
+                    Toast.makeText(this, "Bantuan", Toast.LENGTH_SHORT).show()
+                    true
+                }
                 else -> false
             }
         }
@@ -167,6 +205,143 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         // Set up carousel
         setupCarousel()
+
+        // Check for reminders
+        checkForReminders()
+    }
+
+    private fun setupReminderRecyclerView() {
+        reminderAdapter = ReminderAdapter(
+            reminderItems,
+            onActionClick = { reminder ->
+                handleReminderAction(reminder)
+            },
+            onCloseClick = { reminder ->
+                dismissReminder(reminder)
+            }
+        )
+
+        reminderRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@DashboardActivity, LinearLayoutManager.HORIZONTAL, false)
+            adapter = reminderAdapter
+        }
+    }
+
+    private fun setupShortcutButtons() {
+        // Cek Antrean button - opens external website
+        checkQueueButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.krsjawa3.com/"))
+            startActivity(intent)
+        }
+
+        // Panduan Aplikasi button
+        appGuideButton.setOnClickListener {
+            Toast.makeText(this, "Panduan Aplikasi", Toast.LENGTH_SHORT).show()
+            // TODO: Navigate to app guide screen
+        }
+
+        // Lihat Peta button (new destination)
+        newDestinationButton.setOnClickListener {
+            Toast.makeText(this, "Lihat Peta", Toast.LENGTH_SHORT).show()
+            // TODO: Navigate to map screen
+        }
+
+        // Bantuan button
+        helpButton.setOnClickListener {
+            Toast.makeText(this, "Bantuan", Toast.LENGTH_SHORT).show()
+            // TODO: Navigate to help screen
+        }
+    }
+
+    private fun checkForReminders() {
+        reminderItems.clear()
+
+        // Check if personal data is complete
+        val formData = FormData.load(this)
+        val isPersonalDataComplete = FormData.isPersonalDataComplete(formData)
+
+        if (!isPersonalDataComplete && FormData.isAnyFieldFilled(formData)) {
+            // Add reminder for incomplete personal data
+            val reminder = ReminderItem(
+                id = "incomplete_data",
+                title = "Data Belum Lengkap",
+                message = "Data pribadi Anda belum lengkap, silakan lengkapi data Anda!",
+                actionText = "Lengkapi Data",
+                type = ReminderType.INCOMPLETE_DATA
+            )
+
+            if (!isReminderDismissed(reminder.id)) {
+                reminderItems.add(reminder)
+            }
+        }
+
+        // Check if there's a pending submission
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val hasSubmittedApplication = prefs.getBoolean("has_submitted_application", false)
+
+        if (!hasSubmittedApplication && RegistrationData.hasActiveRegistration(this)) {
+            // Add reminder for pending submission
+            val reminder = ReminderItem(
+                id = "pending_submission",
+                title = "Pengajuan Belum Dikirim",
+                message = "Pengajuan Anda belum dikirim, silakan kirim pengajuan Anda!",
+                actionText = "Kirim Pengajuan",
+                type = ReminderType.PENDING_SUBMISSION
+            )
+
+            if (!isReminderDismissed(reminder.id)) {
+                reminderItems.add(reminder)
+            }
+        }
+
+        // Update UI based on reminders
+        if (reminderItems.isNotEmpty()) {
+            reminderRecyclerView.visibility = View.VISIBLE
+            reminderAdapter.notifyDataSetChanged()
+        } else {
+            reminderRecyclerView.visibility = View.GONE
+        }
+    }
+
+    private fun handleReminderAction(reminder: ReminderItem) {
+        when (reminder.type) {
+            ReminderType.INCOMPLETE_DATA -> {
+                // Navigate to form activity
+                startActivity(Intent(this, FormActivity::class.java))
+            }
+            ReminderType.PENDING_SUBMISSION -> {
+                // Navigate to form page 2 activity
+                startActivity(Intent(this, FormPage2Activity::class.java))
+            }
+            ReminderType.VERIFICATION_NEEDED -> {
+                // Handle verification needed action
+                Toast.makeText(this, "Verifikasi diperlukan", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun dismissReminder(reminder: ReminderItem) {
+        // Save dismissed reminder ID to shared preferences
+        val prefs = getSharedPreferences(PREF_REMINDERS, MODE_PRIVATE)
+        val dismissedReminders = prefs.getStringSet(KEY_DISMISSED_REMINDERS, mutableSetOf()) ?: mutableSetOf()
+        val updatedDismissedReminders = dismissedReminders.toMutableSet()
+        updatedDismissedReminders.add(reminder.id)
+
+        prefs.edit().putStringSet(KEY_DISMISSED_REMINDERS, updatedDismissedReminders).apply()
+
+        // Remove from list and update UI
+        reminderItems.remove(reminder)
+        reminderAdapter.notifyDataSetChanged()
+
+        if (reminderItems.isEmpty()) {
+            reminderRecyclerView.visibility = View.GONE
+        }
+    }
+
+    private fun isReminderDismissed(reminderId: String): Boolean {
+        val prefs = getSharedPreferences(PREF_REMINDERS, MODE_PRIVATE)
+        val dismissedReminders = prefs.getStringSet(KEY_DISMISSED_REMINDERS, mutableSetOf()) ?: mutableSetOf()
+        return dismissedReminders.contains(reminderId)
     }
 
     override fun onPause() {
@@ -177,9 +352,11 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onResume() {
         super.onResume()
         updateUI()
-        loadRecentActivities() // Refresh activities when returning to the dashboard
+        loadRecentActivities()
+        checkForReminders()
         startAutoScroll() // Restart auto-scrolling when activity resumes
     }
+
     private fun setupCarousel() {
         // Initialize carousel items
         carouselItems.clear()
@@ -264,7 +441,6 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }, CAROUSEL_DELAY, CAROUSEL_DELAY)
     }
 
-
     private fun stopAutoScroll() {
         timer?.cancel()
         timer = null
@@ -276,16 +452,23 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         // Get user name from shared preferences
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val userName = prefs.getString("user_name", "User") ?: "User"
+        val userEmail = prefs.getString("email", "") ?: ""
+
+        // Get user data from AuthUtils
+        val userData = AuthUtils.getUserData(userEmail)
 
         // Update welcome message
-        welcomeTextView.text = "Selamat datang kembali, $userName"
+        welcomeTextView.text = "Selamat datang kembali, ${userData.name}"
 
-        // Update queue position (static for now)
-        queuePositionTextView.text = "45"
+        // Update navigation header with user name
+        val headerView = navigationView.getHeaderView(0)
+        val userNameTextView = headerView.findViewById<TextView>(R.id.userNameTextView)
+        if (userNameTextView != null) {
+            userNameTextView.text = userData.name
+        }
 
         // Update location (static for now)
-        locationTextView.text = "Jakarta Timur"
+        locationTextView.text = "Yogyakarta"
 
         // Calculate progress percentage
         var progressSteps = 0
@@ -488,6 +671,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             // Update UI to reflect changes
             updateUI()
             loadRecentActivities()
+            checkForReminders()
         } else {
             // If already submitted, show form details or status
             startActivity(Intent(this, FormPage2Activity::class.java))
@@ -526,4 +710,3 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 }
-

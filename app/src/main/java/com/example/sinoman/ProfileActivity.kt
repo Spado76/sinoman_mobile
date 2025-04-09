@@ -12,7 +12,6 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var userNameTextView: TextView
     private lateinit var userEmailTextView: TextView
     private lateinit var fullNameTextView: TextView
-    private lateinit var addressTextView: TextView
     private lateinit var phoneTextView: TextView
     private lateinit var bottomNavigation: BottomNavigationView
 
@@ -24,7 +23,6 @@ class ProfileActivity : AppCompatActivity() {
         userNameTextView = findViewById(R.id.userNameTextView)
         userEmailTextView = findViewById(R.id.userEmailTextView)
         fullNameTextView = findViewById(R.id.fullNameTextView)
-        addressTextView = findViewById(R.id.addressTextView)
         phoneTextView = findViewById(R.id.phoneTextView)
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
@@ -55,31 +53,22 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun loadUserData() {
-        // In a real app, you would load this from a user profile database
-        // For this example, we'll use hardcoded values and form data
-        val userEmail = "admin@gmail.com" // From login
-        userEmailTextView.text = userEmail
-        userNameTextView.text = "Admin User"
+        // Get user email from shared preferences
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val userEmail = prefs.getString("email", "") ?: ""
+
+        // Get user data from AuthUtils
+        val userData = AuthUtils.getUserData(userEmail)
+
+        // Update UI with user data
+        userEmailTextView.text = userData.email
+        userNameTextView.text = userData.name
+
+        // Set phone number from user data
+        phoneTextView.text = userData.phone
 
         // Load form data for profile info
-        val formData = FormData.load(this)
-        if (formData.name.isNotBlank()) {
-            fullNameTextView.text = formData.name
-        } else {
-            fullNameTextView.text = "Not provided"
-        }
-
-        if (formData.address.isNotBlank()) {
-            addressTextView.text = formData.address
-        } else {
-            addressTextView.text = "Not provided"
-        }
-
-        if (formData.phone.isNotBlank()) {
-            phoneTextView.text = formData.phone
-        } else {
-            phoneTextView.text = "Not provided"
-        }
+        fullNameTextView.text = userData.name
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

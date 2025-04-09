@@ -56,63 +56,18 @@
                     android:textColor="@color/gray"
                     android:textSize="16sp" />
 
-                <!-- Posisi Antrean Card -->
-                <androidx.cardview.widget.CardView
+                <!-- Reminder Cards Section -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/reminderRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="16dp">
-
-                        <FrameLayout
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_marginEnd="16dp">
-
-                            <View
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:background="@drawable/bg_circle_blue" />
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_home"
-                                app:tint="@color/dark_blue" />
-                        </FrameLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Posisi Antrean"
-                                android:textColor="@color/gray"
-                                android:textSize="14sp" />
-
-                            <TextView
-                                android:id="@+id/queuePositionTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="45"
-                                android:textColor="@color/black"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="16dp"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                 <!-- Status Verifikasi Card -->
                 <androidx.cardview.widget.CardView
@@ -508,6 +463,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp" />
 
+                <!-- Shortcut Buttons Section -->
+                <include
+                    android:id="@+id/shortcutSection"
+                    layout="@layout/section_shortcut_buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Footer Space to prevent content from being hidden by bottom navigation -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -536,4 +503,3 @@
         app:menu="@menu/drawer_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
-

@@ -97,7 +97,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="Nama Lengkap"
+                        android:text="Username"
                         android:textColor="@color/dark_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -108,24 +108,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:text="User Full Name"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="Alamat"
-                        android:textColor="@color/dark_blue"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/addressTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:text="User Address"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
