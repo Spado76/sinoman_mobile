@@ -187,7 +187,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
                         android:backgroundTint="@color/dark_blue"
-                        android:text="Simpan Perubahan"
+                        android:text="Simpan"
                         android:textColor="@color/white" />
                 </LinearLayout>
             </LinearLayout>

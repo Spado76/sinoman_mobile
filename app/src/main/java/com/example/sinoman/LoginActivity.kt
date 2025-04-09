@@ -18,6 +18,17 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check if user is already logged in
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val isLoggedIn = prefs.getBoolean("is_logged_in", false)
+
+        if (isLoggedIn) {
+            // Skip login, go directly to dashboard
+            navigateToDashboard()
+            return
+        }
+
         setContentView(R.layout.activity_login)
 
         Log.d("LoginActivity", "onCreate called")
@@ -45,20 +56,15 @@ class LoginActivity : AppCompatActivity() {
                     // Get user data
                     val userData = AuthUtils.getUserData(email)
 
-                    // Save user session
+                    // Save user session with auto-login flag
                     val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                    prefs.edit().putString("email", email).putString("user_name", userData.name).apply()
+                    prefs.edit()
+                        .putString("email", email)
+                        .putString("user_name", userData.name)
+                        .putBoolean("is_logged_in", true) // Set auto-login flag
+                        .apply()
 
-                    try {
-                        // Navigate to dashboard with explicit intent
-                        val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
-                        Log.d("LoginActivity", "Starting DashboardActivity")
-                        startActivity(intent)
-                        finish() // Close LoginActivity
-                    } catch (e: Exception) {
-                        Log.e("LoginActivity", "Error starting DashboardActivity", e)
-                        Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
+                    navigateToDashboard()
                 } else {
                     Toast.makeText(this, "Email atau kata sandi tidak valid", Toast.LENGTH_SHORT).show()
                 }
@@ -79,5 +85,17 @@ class LoginActivity : AppCompatActivity() {
             Log.e("LoginActivity", "Error in onCreate", e)
         }
     }
-}
 
+    private fun navigateToDashboard() {
+        try {
+            // Navigate to dashboard with explicit intent
+            val intent = Intent(this, DashboardActivity::class.java)
+            Log.d("LoginActivity", "Starting DashboardActivity")
+            startActivity(intent)
+            finish() // Close LoginActivity
+        } catch (e: Exception) {
+            Log.e("LoginActivity", "Error starting DashboardActivity", e)
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+}

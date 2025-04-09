@@ -3,49 +3,77 @@ package com.example.sinoman
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.widget.ViewPager2
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewPager: ViewPager2
-    private lateinit var introSlideAdapter: IntroSlideAdapter
-
-    // List of intro slide layouts
-    private val introSlideLayouts = listOf(
-        R.layout.slide_intro_1,
-        R.layout.slide_intro_2,
-        R.layout.slide_intro_3
-    )
+    private lateinit var nextButton: Button
+    private lateinit var guideButton: Button
+    private lateinit var aboutButton: Button
+    private lateinit var termsButton: Button
+    private lateinit var faqButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        // Initialize ViewPager
-        viewPager = findViewById(R.id.viewPager)
+        // Check if user is already logged in
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val isLoggedIn = prefs.getBoolean("is_logged_in", false)
 
-        // Set up adapter
-        introSlideAdapter = IntroSlideAdapter(introSlideLayouts) { position ->
-            Log.d("MainActivity", "Next button clicked at position: $position")
-            // Handle next button click
-            if (position < introSlideLayouts.size - 1) {
-                // If not the last slide, go to next slide
-                viewPager.currentItem = position + 1
-            } else {
-                // If last slide, go to login activity
-                try {
-                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish() // Close MainActivity
-                } catch (e: Exception) {
-                    Log.e("MainActivity", "Error navigating to LoginActivity", e)
-                }
-            }
+        if (isLoggedIn) {
+            // Skip login, go directly to dashboard
+            navigateToDashboard()
+            return
         }
 
-        // Set adapter to ViewPager
-        viewPager.adapter = introSlideAdapter
+        setContentView(R.layout.activity_main)
+
+        // Initialize buttons
+        nextButton = findViewById(R.id.nextButton)
+        guideButton = findViewById(R.id.guideButton)
+        aboutButton = findViewById(R.id.aboutButton)
+        termsButton = findViewById(R.id.termsButton)
+        faqButton = findViewById(R.id.faqButton)
+
+        // Set click listeners
+        nextButton.setOnClickListener {
+            // Navigate to login screen
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        aboutButton.setOnClickListener {
+            // Navigate to about screen
+            val intent = Intent(this, AboutActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Other button click listeners can be implemented similarly
+        guideButton.setOnClickListener {
+            // TODO: Implement guide functionality
+        }
+
+        termsButton.setOnClickListener {
+            // TODO: Implement terms and conditions functionality
+        }
+
+        faqButton.setOnClickListener {
+            // TODO: Implement FAQ functionality
+        }
+    }
+    private fun navigateToDashboard() {
+        try {
+            // Navigate to dashboard with explicit intent
+            val intent = Intent(this, DashboardActivity::class.java)
+            Log.d("LoginActivity", "Starting DashboardActivity")
+            startActivity(intent)
+            finish() // Close LoginActivity
+        } catch (e: Exception) {
+            Log.e("LoginActivity", "Error starting DashboardActivity", e)
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 }
-

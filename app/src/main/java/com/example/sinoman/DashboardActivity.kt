@@ -690,10 +690,13 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_logout -> {
                 // Clear user session and navigate to login
                 val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                prefs.edit().clear().apply()
+                prefs.edit()
+                    .clear()
+                    .putBoolean("is_logged_in", false) // Ensure the auto-login flag is cleared
+                    .apply()
 
                 val intent = Intent(this, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
                 finish()
             }

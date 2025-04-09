@@ -1,5 +1,6 @@
 package com.example.sinoman
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -54,8 +55,18 @@ class RegisterActivity : AppCompatActivity() {
             
             // Register user
             if (AuthUtils.registerUser(email, name, phone, password)) {
+                // Save user session with auto-login flag
+                val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                prefs.edit()
+                    .putString("email", email)
+                    .putString("user_name", name)
+                    .putBoolean("is_logged_in", true) // Set auto-login flag
+                    .apply()
                 Toast.makeText(this, "Pendaftaran berhasil!", Toast.LENGTH_SHORT).show()
-                finish() // Go back to login screen
+                // Navigate to dashboard
+                val intent = Intent(this, DashboardActivity::class.java)
+                startActivity(intent)
+                finish()
             } else {
                 Toast.makeText(this, "Pendaftaran gagal!", Toast.LENGTH_SHORT).show()
             }
