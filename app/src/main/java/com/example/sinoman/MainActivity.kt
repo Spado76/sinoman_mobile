@@ -53,7 +53,8 @@ class MainActivity : AppCompatActivity() {
 
         // Other button click listeners can be implemented similarly
         guideButton.setOnClickListener {
-            // TODO: Implement guide functionality
+            val intent = Intent(this, UserGuideActivity::class.java)
+            startActivity(intent)
         }
 
         termsButton.setOnClickListener {
@@ -61,7 +62,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         faqButton.setOnClickListener {
-            // TODO: Implement FAQ functionality
+            val intent = Intent(this, HelpActivity::class.java)
+            startActivity(intent)
         }
     }
     private fun navigateToDashboard() {

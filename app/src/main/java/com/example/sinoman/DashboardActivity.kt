@@ -240,14 +240,13 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         // Lihat Peta button (new destination)
         newDestinationButton.setOnClickListener {
-            Toast.makeText(this, "Lihat Peta", Toast.LENGTH_SHORT).show()
-            // TODO: Navigate to map screen
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://maps.app.goo.gl/xtdw8t1AjvSEcR5eA"))
+            startActivity(intent)
         }
 
         // Bantuan button
         helpButton.setOnClickListener {
-            Toast.makeText(this, "Bantuan", Toast.LENGTH_SHORT).show()
-            // TODO: Navigate to help screen
+            startActivity(Intent(this, HelpActivity::class.java))
         }
     }
 
