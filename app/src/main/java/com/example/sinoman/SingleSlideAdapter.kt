@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 class SingleSlideAdapter(private val context: Context) : RecyclerView.Adapter<SingleSlideAdapter.SlideViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SlideViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.slide_intro_single, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.activity_main, parent, false)
         return SlideViewHolder(view)
     }
 

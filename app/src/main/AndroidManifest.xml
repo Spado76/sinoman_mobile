@@ -62,6 +62,10 @@
         <activity
             android:name=".AboutActivity"
             android:exported="true" />
+
+        <activity
+            android:name=".HelpActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

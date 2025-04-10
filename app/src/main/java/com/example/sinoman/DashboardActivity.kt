@@ -184,8 +184,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     true
                 }
                 R.id.nav_help -> {
-                    // Handle help navigation
-                    Toast.makeText(this, "Bantuan", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, HelpActivity::class.java))
                     true
                 }
                 else -> false
@@ -684,6 +683,23 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.nav_dashboard -> {
+                // Already on dashboard, do nothing
+            }
+            R.id.nav_profile -> {
+                navigateToProfile()
+            }
+            R.id.nav_guide -> {
+                Toast.makeText(this, "Panduan Penggunaan", Toast.LENGTH_SHORT).show()
+                // TODO: Navigate to guide screen
+            }
+            R.id.nav_help -> {
+                startActivity(Intent(this, HelpActivity::class.java))
+            }
+            R.id.nav_settings -> {
+                Toast.makeText(this, "Pengaturan", Toast.LENGTH_SHORT).show()
+                // TODO: Navigate to settings screen
+            }
             R.id.nav_about -> {
                 startActivity(Intent(this, AboutActivity::class.java))
             }

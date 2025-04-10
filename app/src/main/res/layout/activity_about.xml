@@ -42,10 +42,10 @@
 
                 <ImageView
                     android:id="@+id/appLogoImageView"
-                    android:layout_width="96dp"
+                    android:layout_width="280dp"
                     android:layout_height="96dp"
                     android:contentDescription="Logo Aplikasi"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/sinoman" />
 
                 <TextView
                     android:id="@+id/appNameTextView"
@@ -62,7 +62,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Versi 1.0.0"
+                    android:text="Versi 1.2.5 Dev"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -94,7 +94,7 @@
                         android:id="@+id/appDescriptionTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat nisl ut dapibus. Mauris iaculis porttitor posuere. Praesent id metus massa, ut blandit odio."
+                        android:text='SINOMAN "Sistem Informasi Antrean Omah Transparan" adalah Aplikasi yang dirancang untuk menyediakan solusi terintegrasi dan transparan dalam sistem antrian perumahan (housing que), khususnya bagi masyarakat berpenghasilan rendah (MBR). Tujuannya adalah memastikan distribusi perumahan yang adil, efisien, dan bebas dari praktik manipulasi atau nepotisme.'
                         android:textColor="@color/black"
                         android:textSize="14sp" />
                 </LinearLayout>
