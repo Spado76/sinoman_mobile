@@ -92,7 +92,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:backgroundTint="@color/button_background_selector"
-                        android:text="Pendaftaran Bantuan Punya Rumah"
+                        android:text="Pendaftaran Bantuan Rumah"
                         android:textColor="@color/button_text_selector" />
 
                     <Button
@@ -100,7 +100,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/button_background_selector"
-                        android:text="Pendaftaran Bantuan Tidak Punya Rumah"
+                        android:text="Pendaftaran Bantuan Rusun"
                         android:textColor="@color/button_text_selector" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
