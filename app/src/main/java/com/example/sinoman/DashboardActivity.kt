@@ -235,8 +235,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         // Panduan Aplikasi button
         appGuideButton.setOnClickListener {
-            Toast.makeText(this, "Panduan Aplikasi", Toast.LENGTH_SHORT).show()
-            // TODO: Navigate to app guide screen
+            startActivity(Intent(this, UserGuideActivity::class.java))
         }
 
         // Lihat Peta button (new destination)
@@ -690,8 +689,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 navigateToProfile()
             }
             R.id.nav_guide -> {
-                Toast.makeText(this, "Panduan Penggunaan", Toast.LENGTH_SHORT).show()
-                // TODO: Navigate to guide screen
+                startActivity(Intent(this, UserGuideActivity::class.java))
             }
             R.id.nav_help -> {
                 startActivity(Intent(this, HelpActivity::class.java))
