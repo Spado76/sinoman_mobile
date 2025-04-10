@@ -697,8 +697,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 startActivity(Intent(this, HelpActivity::class.java))
             }
             R.id.nav_settings -> {
-                Toast.makeText(this, "Pengaturan", Toast.LENGTH_SHORT).show()
-                // TODO: Navigate to settings screen
+                startActivity(Intent(this, SettingsActivity::class.java))
             }
             R.id.nav_about -> {
                 startActivity(Intent(this, AboutActivity::class.java))
