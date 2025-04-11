@@ -1,7 +1,10 @@
 package com.example.sinoman
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
@@ -10,14 +13,18 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import de.hdodenhof.circleimageview.CircleImageView
+import java.io.File
 
 class ProfileActivity : AppCompatActivity() {
 
+    private lateinit var profileImageView: CircleImageView
     private lateinit var usernameEditText: TextInputEditText
     private lateinit var emailTextView: TextView
     private lateinit var phoneTextView: TextView
@@ -31,13 +38,46 @@ class ProfileActivity : AppCompatActivity() {
     // Store original values for cancel functionality
     private var originalUsername: String = ""
     private var originalAboutMe: String = ""
+    private var originalProfileImageUri: Uri? = null
+    private var newProfileImageUri: Uri? = null
     private var isEditing: Boolean = false
+
+    // Activity result launcher for image selection
+    private val selectImageLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageUri = result.data?.data
+            if (imageUri != null) {
+                // Launch image cropping activity
+                val intent = Intent(this, ImageCropActivity::class.java)
+                intent.putExtra("imageUri", imageUri)
+                cropImageLauncher.launch(intent)
+            }
+        }
+    }
+
+    // Activity result launcher for image cropping
+    private val cropImageLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val croppedImageUri = result.data?.getParcelableExtra<Uri>("croppedImageUri")
+            if (croppedImageUri != null) {
+                // Update profile image with cropped image
+                profileImageView.setImageURI(croppedImageUri)
+                newProfileImageUri = croppedImageUri
+                checkForChanges()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
         // Initialize views
+        profileImageView = findViewById(R.id.profileImageView)
         usernameEditText = findViewById(R.id.usernameEditText)
         emailTextView = findViewById(R.id.emailTextView)
         phoneTextView = findViewById(R.id.phoneTextView)
@@ -100,6 +140,7 @@ class ProfileActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val userEmail = prefs.getString("email", "") ?: ""
         val aboutMe = prefs.getString("about_me", "") ?: ""
+        val profileImagePath = prefs.getString("profile_image_path", null)
 
         // Get user data from AuthUtils
         val userData = AuthUtils.getUserData(userEmail)
@@ -107,6 +148,15 @@ class ProfileActivity : AppCompatActivity() {
         // Store original values
         originalUsername = userData.name
         originalAboutMe = aboutMe
+
+        // Load profile image if available
+        if (profileImagePath != null) {
+            val imageFile = File(profileImagePath)
+            if (imageFile.exists()) {
+                originalProfileImageUri = Uri.fromFile(imageFile)
+                profileImageView.setImageURI(originalProfileImageUri)
+            }
+        }
 
         // Update UI with user data
         usernameEditText.setText(userData.name)
@@ -133,7 +183,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun setupButtonListeners() {
         // Change photo button
         changePhotoButton.setOnClickListener {
-            Toast.makeText(this, "Fitur ganti foto akan segera hadir", Toast.LENGTH_SHORT).show()
+            openImagePicker()
         }
 
         // Cancel button
@@ -141,6 +191,15 @@ class ProfileActivity : AppCompatActivity() {
             // Restore original values
             usernameEditText.setText(originalUsername)
             aboutMeEditText.setText(originalAboutMe)
+
+            // Restore original profile image
+            if (originalProfileImageUri != null) {
+                profileImageView.setImageURI(originalProfileImageUri)
+            } else {
+                profileImageView.setImageResource(R.drawable.ic_nav_profile)
+            }
+
+            newProfileImageUri = null
 
             // Hide action buttons
             actionButtonsLayout.visibility = View.GONE
@@ -153,12 +212,20 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    private fun openImagePicker() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        selectImageLauncher.launch(intent)
+    }
+
     private fun checkForChanges() {
         val currentUsername = usernameEditText.text.toString()
         val currentAboutMe = aboutMeEditText.text.toString()
 
         // Check if any field has changed
-        val hasChanges = currentUsername != originalUsername || currentAboutMe != originalAboutMe
+        val hasChanges = currentUsername != originalUsername ||
+                currentAboutMe != originalAboutMe ||
+                newProfileImageUri != null
 
         // Show/hide action buttons based on changes
         if (hasChanges && !isEditing) {
@@ -180,16 +247,54 @@ class ProfileActivity : AppCompatActivity() {
             return
         }
 
+        // Save profile image if changed
+        var profileImagePath: String? = null
+        if (newProfileImageUri != null) {
+            // Copy image to app's files directory for persistence
+            try {
+                val inputStream = contentResolver.openInputStream(newProfileImageUri!!)
+                if (inputStream != null) {
+                    val outputFile = File(filesDir, "profile_${System.currentTimeMillis()}.jpg")
+                    outputFile.outputStream().use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                    profileImagePath = outputFile.absolutePath
+
+                    // Delete old profile image if exists
+                    val oldProfileImagePath = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                        .getString("profile_image_path", null)
+                    if (oldProfileImagePath != null) {
+                        val oldFile = File(oldProfileImagePath)
+                        if (oldFile.exists() && oldFile.absolutePath != outputFile.absolutePath) {
+                            oldFile.delete()
+                        }
+                    }
+                }
+                inputStream?.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(this, "Gagal menyimpan foto profil", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         // Save changes to shared preferences
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        prefs.edit()
-            .putString("user_name", newUsername)
-            .putString("about_me", newAboutMe)
-            .apply()
+        val editor = prefs.edit()
+        editor.putString("user_name", newUsername)
+        editor.putString("about_me", newAboutMe)
+
+        // Save profile image path if available
+        if (profileImagePath != null) {
+            editor.putString("profile_image_path", profileImagePath)
+            originalProfileImageUri = Uri.fromFile(File(profileImagePath))
+        }
+
+        editor.apply()
 
         // Update original values
         originalUsername = newUsername
         originalAboutMe = newAboutMe
+        newProfileImageUri = null
 
         // Hide action buttons
         actionButtonsLayout.visibility = View.GONE

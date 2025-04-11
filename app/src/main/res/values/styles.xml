@@ -109,5 +109,13 @@
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
     </style>
+
+    <!-- Add this theme to styles.xml -->
+    <style name="Theme.Sinoman.NoActionBar" parent="Theme.Sinoman">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/black</item>
+        <item name="android:windowBackground">@color/black</item>
+    </style>
 </resources>
 

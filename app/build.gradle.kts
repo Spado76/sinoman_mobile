@@ -45,7 +45,9 @@ dependencies {
 
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.google.code.gson:gson:2.12.1")
+    implementation("com.github.CanHub:Android-Image-Cropper:4.3.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
