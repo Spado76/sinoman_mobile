@@ -451,13 +451,6 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         // Update welcome message
         welcomeTextView.text = "Selamat datang kembali, ${userData.name}"
 
-        // Update navigation header with user name
-        //val headerView = navigationView.getHeaderView(0)
-        //val userNameTextView = headerView.findViewById<TextView>(R.id.userNameTextView)
-        //if (userNameTextView != null) {
-        //    userNameTextView.text = userData.name
-        //}
-
         // Update location (static for now)
         locationTextView.text = "Yogyakarta"
 
@@ -630,42 +623,9 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun navigateToForm() {
         if (FormData.isPersonalDataCompleted(this)) {
-            // If personal data is complete, show application form options
-            showApplicationOptions()
+            startActivity(Intent(this, FormPage2Activity::class.java))
         } else {
             startActivity(Intent(this, FormActivity::class.java))
-        }
-    }
-
-    private fun showApplicationOptions() {
-        // This would typically show a dialog with options for the two types of applications
-        // For now, we'll simulate submitting an application
-        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val hasSubmitted = prefs.getBoolean("has_submitted_application", false)
-
-        if (!hasSubmitted) {
-            // Simulate submitting an application for housing assistance
-            prefs.edit()
-                .putBoolean("has_submitted_application", true)
-                .putInt("assistance_type", ASSISTANCE_WITH_HOME)
-                .putInt("verification_status", STATUS_UNDER_REVIEW)
-                .apply()
-
-            // Add a notification for the submission
-            val notification = Notification(
-                title = "Dokumen KK Anda telah diverifikasi",
-                message = "Dokumen Kartu Keluarga Anda telah berhasil diverifikasi oleh sistem.",
-                type = NotificationType.DATA_COMPLETION
-            )
-            Notification.addNotification(this, notification)
-
-            // Update UI to reflect changes
-            updateUI()
-            loadRecentActivities()
-            checkForReminders()
-        } else {
-            // If already submitted, show form details or status
-            startActivity(Intent(this, FormPage2Activity::class.java))
         }
     }
 

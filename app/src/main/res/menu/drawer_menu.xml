@@ -15,7 +15,7 @@
             android:title="Panduan Penggunaan" />
         <item
             android:id="@+id/nav_help"
-            android:icon="@drawable/ic_headset"
+            android:icon="@drawable/ic_nav_help"
             android:title="Bantuan" />
         <item
             android:id="@+id/nav_settings"

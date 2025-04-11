@@ -76,6 +76,10 @@ class ProfileActivity : AppCompatActivity() {
                     finish()
                     true
                 }
+                R.id.nav_help -> {
+                    startActivity(Intent(this, HelpActivity::class.java))
+                    true
+                }
                 R.id.nav_profile -> true
                 else -> false
             }

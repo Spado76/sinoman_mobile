@@ -105,20 +105,6 @@ class FormPage2Activity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-        // Example of disabling buttons under certain conditions
-        // In a real app, this would be based on actual business logic
-        fun updateButtonStates() {
-            // Example condition: Disable house owner registration if some condition is not met
-            val canRegisterForHouseOwner = false // This would be a real condition in your app
-            houseOwnerButton.isEnabled = canRegisterForHouseOwner
-
-            // Another example condition for personal data
-            val personalDataComplete = true // This would be a real condition in your app
-            editPersonalDataButton.isEnabled = personalDataComplete
-        }
-
-        // Call this method to update button states
-        updateButtonStates()
     }
 
     override fun onResume() {

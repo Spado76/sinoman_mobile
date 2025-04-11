@@ -66,6 +66,10 @@ class NotificationsActivity : AppCompatActivity() {
                     finish()
                     true
                 }
+                R.id.nav_help -> {
+                    startActivity(Intent(this, HelpActivity::class.java))
+                    true
+                }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ProfileActivity::class.java))
                     finish()
