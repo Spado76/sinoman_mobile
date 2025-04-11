@@ -50,8 +50,8 @@ object NotificationManager {
                 
                 if (!exists) {
                     val title = when (registration.type) {
-                        RegistrationType.HOUSE_OWNER -> "Pendaftaran Bantuan Punya Rumah"
-                        RegistrationType.NON_HOUSE_OWNER -> "Pendaftaran Bantuan Tidak Punya Rumah"
+                        RegistrationType.HOUSE_OWNER -> "Pendaftaran Bantuan Rumah"
+                        RegistrationType.NON_HOUSE_OWNER -> "Pendaftaran Bantuan Rusun"
                     }
                     
                     val notification = Notification(
@@ -68,8 +68,8 @@ object NotificationManager {
     // This method should be called when a registration is submitted
     fun notifyRegistrationSubmitted(context: Context, registration: RegistrationData) {
         val title = when (registration.type) {
-            RegistrationType.HOUSE_OWNER -> "Pendaftaran Bantuan Punya Rumah"
-            RegistrationType.NON_HOUSE_OWNER -> "Pendaftaran Bantuan Tidak Punya Rumah"
+            RegistrationType.HOUSE_OWNER -> "Pendaftaran Bantuan Rumah"
+            RegistrationType.NON_HOUSE_OWNER -> "Pendaftaran Bantuan Rusun"
         }
         
         val notification = Notification(

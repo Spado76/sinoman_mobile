@@ -150,6 +150,33 @@ class FormPage2Activity : AppCompatActivity() {
     }
 
     private fun updateButtonsState() {
+        // Check if there's any submitted application (regardless of type)
+        val hasSubmittedApplication = registrations.any {
+            it.status != RegistrationStatus.IN_PROGRESS
+        }
+
+        // Also check shared preferences for submission status
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val hasSubmittedInPrefs = prefs.getBoolean("has_submitted_application", false)
+
+        // If either condition is true, disable both buttons
+        if (hasSubmittedApplication || hasSubmittedInPrefs) {
+            houseOwnerButton.isEnabled = false
+            nonHouseOwnerButton.isEnabled = false
+
+            // Update button text to indicate why they're disabled
+            houseOwnerButton.text = "Pendaftaran Bantuan Rumah (Sudah Mendaftar)"
+            nonHouseOwnerButton.text = "Pendaftaran Bantuan Rusun (Sudah Mendaftar)"
+            return
+        }
+
+        // Reset button text if needed
+        houseOwnerButton.text = "Pendaftaran Bantuan Rumah"
+        nonHouseOwnerButton.text = "Pendaftaran Bantuan Rusun"
+
+        // Enable/disable buttons based on in-progress registrations
+
+        // If no submission yet, check for in-progress registrations
         val hasHouseOwnerRegistration = RegistrationData.hasActiveRegistrationOfType(this, RegistrationType.HOUSE_OWNER)
         val hasNonHouseOwnerRegistration = RegistrationData.hasActiveRegistrationOfType(this, RegistrationType.NON_HOUSE_OWNER)
 
@@ -202,8 +229,8 @@ class RegistrationsAdapter(
 
         // Set registration type
         holder.typeTextView.text = when (registration.type) {
-            RegistrationType.HOUSE_OWNER -> "Pendaftaran Bantuan Punya Rumah"
-            RegistrationType.NON_HOUSE_OWNER -> "Pendaftaran Bantuan Tidak Punya Rumah"
+            RegistrationType.HOUSE_OWNER -> "Pendaftaran Bantuan Rumah"
+            RegistrationType.NON_HOUSE_OWNER -> "Pendaftaran Bantuan Rusun"
         }
 
         // Set registration status
