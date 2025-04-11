@@ -158,14 +158,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         // Set up navigation listeners
         navigationView.setNavigationItemSelectedListener(this)
 
-        // Set up header click listeners
+        // Get header view reference (without click listeners)
         val headerView = navigationView.getHeaderView(0)
-        headerView.findViewById<View>(R.id.profileImageView).setOnClickListener {
-            navigateToProfile()
-        }
-        headerView.findViewById<View>(R.id.userNameTextView).setOnClickListener {
-            navigateToProfile()
-        }
 
         // Set up bottom navigation
         bottomNavigation.setOnItemSelectedListener { item ->
@@ -458,11 +452,11 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         welcomeTextView.text = "Selamat datang kembali, ${userData.name}"
 
         // Update navigation header with user name
-        val headerView = navigationView.getHeaderView(0)
-        val userNameTextView = headerView.findViewById<TextView>(R.id.userNameTextView)
-        if (userNameTextView != null) {
-            userNameTextView.text = userData.name
-        }
+        //val headerView = navigationView.getHeaderView(0)
+        //val userNameTextView = headerView.findViewById<TextView>(R.id.userNameTextView)
+        //if (userNameTextView != null) {
+        //    userNameTextView.text = userData.name
+        //}
 
         // Update location (static for now)
         locationTextView.text = "Yogyakarta"
