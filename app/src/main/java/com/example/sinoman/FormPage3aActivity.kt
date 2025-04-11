@@ -60,9 +60,21 @@ class FormPage3aActivity : AppCompatActivity() {
         // Set up button click listeners
         submitButton.setOnClickListener {
             if (validateForm()) {
+                // Disable submit button to prevent multiple submissions
+                submitButton.isEnabled = false
+
                 saveFormData()
                 registration.status = RegistrationStatus.UNDER_REVIEW
                 RegistrationData.addOrUpdateRegistration(this, registration)
+
+                // Update shared preferences to reflect submission status
+                val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                prefs.edit()
+                    .putBoolean("has_submitted_application", true)
+                    .putInt("assistance_type", DashboardActivity.ASSISTANCE_WITH_HOME)
+                    .putInt("verification_status", DashboardActivity.STATUS_UNDER_REVIEW)
+                    .apply()
+
                 // Add notification for form submission
                 NotificationManager.notifyRegistrationSubmitted(this, registration)
                 Toast.makeText(this, "Data berhasil dikirim", Toast.LENGTH_SHORT).show()

@@ -473,8 +473,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         // Update assistance type text
         when (assistanceType) {
-            ASSISTANCE_WITH_HOME -> assistanceTypeTextView.text = "Bantuan Punya Rumah"
-            ASSISTANCE_WITHOUT_HOME -> assistanceTypeTextView.text = "Bantuan Tidak Punya Rumah"
+            ASSISTANCE_WITH_HOME -> assistanceTypeTextView.text = "Bantuan Rumah"
+            ASSISTANCE_WITHOUT_HOME -> assistanceTypeTextView.text = "Bantuan Rusun"
             else -> assistanceTypeTextView.text = "Belum Dipilih"
         }
 
