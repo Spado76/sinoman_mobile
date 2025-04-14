@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -100,6 +101,29 @@ class FormActivity : AppCompatActivity() {
     private lateinit var otherDocsCheckBox: CheckBox
     private lateinit var otherDocsUploadButton: Button
 
+    // Assistance Type
+    private lateinit var assistanceTypeRadioGroup: RadioGroup
+    private lateinit var houseAssistanceRadioButton: RadioButton
+    private lateinit var apartmentAssistanceRadioButton: RadioButton
+    private lateinit var houseAssistanceQuestionsLayout: LinearLayout
+    private lateinit var apartmentAssistanceQuestionsLayout: LinearLayout
+
+    // House Assistance Questions
+    private lateinit var houseQuestion1EditText: TextInputEditText
+    private lateinit var houseQuestion1InputLayout: TextInputLayout
+    private lateinit var houseQuestion2EditText: TextInputEditText
+    private lateinit var houseQuestion2InputLayout: TextInputLayout
+    private lateinit var houseQuestion3EditText: TextInputEditText
+    private lateinit var houseQuestion3InputLayout: TextInputLayout
+
+    // Apartment Assistance Questions
+    private lateinit var apartmentQuestion1EditText: TextInputEditText
+    private lateinit var apartmentQuestion1InputLayout: TextInputLayout
+    private lateinit var apartmentQuestion2EditText: TextInputEditText
+    private lateinit var apartmentQuestion2InputLayout: TextInputLayout
+    private lateinit var apartmentQuestion3EditText: TextInputEditText
+    private lateinit var apartmentQuestion3InputLayout: TextInputLayout
+
     // Agreement
     private lateinit var agreementCheckBox: CheckBox
     private lateinit var signatureEditText: TextInputEditText
@@ -174,6 +198,9 @@ class FormActivity : AppCompatActivity() {
 
         // Set up date picker for registration date
         setupDatePicker()
+
+        // Set up assistance type radio group
+        setupAssistanceTypeRadioGroup()
 
         // Set up save button
         saveButton.setOnClickListener {
@@ -259,6 +286,29 @@ class FormActivity : AppCompatActivity() {
         otherDocsCheckBox = findViewById(R.id.otherDocsCheckBox)
         otherDocsUploadButton = findViewById(R.id.otherDocsUploadButton)
 
+        // Assistance Type
+        assistanceTypeRadioGroup = findViewById(R.id.assistanceTypeRadioGroup)
+        houseAssistanceRadioButton = findViewById(R.id.houseAssistanceRadioButton)
+        apartmentAssistanceRadioButton = findViewById(R.id.apartmentAssistanceRadioButton)
+        houseAssistanceQuestionsLayout = findViewById(R.id.houseAssistanceQuestionsLayout)
+        apartmentAssistanceQuestionsLayout = findViewById(R.id.apartmentAssistanceQuestionsLayout)
+
+        // House Assistance Questions
+        houseQuestion1EditText = findViewById(R.id.houseQuestion1EditText)
+        houseQuestion1InputLayout = findViewById(R.id.houseQuestion1InputLayout)
+        houseQuestion2EditText = findViewById(R.id.houseQuestion2EditText)
+        houseQuestion2InputLayout = findViewById(R.id.houseQuestion2InputLayout)
+        houseQuestion3EditText = findViewById(R.id.houseQuestion3EditText)
+        houseQuestion3InputLayout = findViewById(R.id.houseQuestion3InputLayout)
+
+        // Apartment Assistance Questions
+        apartmentQuestion1EditText = findViewById(R.id.apartmentQuestion1EditText)
+        apartmentQuestion1InputLayout = findViewById(R.id.apartmentQuestion1InputLayout)
+        apartmentQuestion2EditText = findViewById(R.id.apartmentQuestion2EditText)
+        apartmentQuestion2InputLayout = findViewById(R.id.apartmentQuestion2InputLayout)
+        apartmentQuestion3EditText = findViewById(R.id.apartmentQuestion3EditText)
+        apartmentQuestion3InputLayout = findViewById(R.id.apartmentQuestion3InputLayout)
+
         // Agreement
         agreementCheckBox = findViewById(R.id.agreementCheckBox)
         signatureEditText = findViewById(R.id.signatureEditText)
@@ -307,11 +357,101 @@ class FormActivity : AppCompatActivity() {
         registrationDateInputLayout.isEnabled = false
     }
 
+    private fun setupAssistanceTypeRadioGroup() {
+        assistanceTypeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.houseAssistanceRadioButton -> {
+                    houseAssistanceQuestionsLayout.visibility = View.VISIBLE
+                    apartmentAssistanceQuestionsLayout.visibility = View.GONE
+
+                    // Save assistance type to shared preferences
+                    val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                    prefs.edit().putInt("assistance_type", DashboardActivity.ASSISTANCE_WITH_HOME).apply()
+                }
+                R.id.apartmentAssistanceRadioButton -> {
+                    houseAssistanceQuestionsLayout.visibility = View.GONE
+                    apartmentAssistanceQuestionsLayout.visibility = View.VISIBLE
+
+                    // Save assistance type to shared preferences
+                    val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                    prefs.edit().putInt("assistance_type", DashboardActivity.ASSISTANCE_WITHOUT_HOME).apply()
+                }
+                else -> {
+                    houseAssistanceQuestionsLayout.visibility = View.GONE
+                    apartmentAssistanceQuestionsLayout.visibility = View.GONE
+
+                    // Reset assistance type in shared preferences
+                    val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                    prefs.edit().putInt("assistance_type", DashboardActivity.ASSISTANCE_NONE).apply()
+                }
+            }
+            formChanged = true
+        }
+    }
+
     private fun populateFormWithData() {
-        // This is a placeholder - you would need to adapt this to your actual FormData structure
-        // For now, we'll just set the current date for the registration date
+        // Personal Data
+        nameEditText.setText(formData.name)
+        nikEditText.setText(formData.nik)
+        birthplaceEditText.setText(formData.hometownAddress)
+        addressEditText.setText(formData.address)
+        phoneEditText.setText(formData.phone)
+        emailEditText.setText("")
+
+        // Set gender
+        when (formData.gender) {
+            "Laki-laki" -> maleRadioButton.isChecked = true
+            "Perempuan" -> femaleRadioButton.isChecked = true
+        }
+
+        // Family Data
+        when (formData.maritalStatus) {
+            "Belum Menikah" -> singleRadioButton.isChecked = true
+            "Menikah" -> marriedRadioButton.isChecked = true
+            "Duda/Janda" -> widowedRadioButton.isChecked = true
+        }
+
+        familyMembersEditText.setText(formData.numberOfChildren)
+
+        // Economic Data
+        occupationEditText.setText(formData.occupation)
+        companyEditText.setText("")
+        incomeEditText.setText(formData.monthlyIncome)
+
+        // Housing Data
+        currentAddressEditText.setText(formData.currentAddress)
+
+        // Set registration date
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         registrationDateEditText.setText(dateFormat.format(Date()))
+
+        // Check if document paths are already set
+        if (formData.nikPhotoPath.isNotBlank()) {
+            ktpDocPath = formData.nikPhotoPath
+            ktpCheckBox.isEnabled = true
+            ktpCheckBox.isChecked = true
+        }
+
+        if (formData.familyCardPhotoPath.isNotBlank()) {
+            kkDocPath = formData.familyCardPhotoPath
+            kkCheckBox.isEnabled = true
+            kkCheckBox.isChecked = true
+        }
+
+        // Check for assistance type in shared preferences
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val assistanceType = prefs.getInt("assistance_type", DashboardActivity.ASSISTANCE_NONE)
+
+        when (assistanceType) {
+            DashboardActivity.ASSISTANCE_WITH_HOME -> {
+                houseAssistanceRadioButton.isChecked = true
+                houseAssistanceQuestionsLayout.visibility = View.VISIBLE
+            }
+            DashboardActivity.ASSISTANCE_WITHOUT_HOME -> {
+                apartmentAssistanceRadioButton.isChecked = true
+                apartmentAssistanceQuestionsLayout.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun setupFormChangeListeners() {
@@ -320,14 +460,18 @@ class FormActivity : AppCompatActivity() {
             nameInputLayout, nikInputLayout, birthplaceInputLayout, addressInputLayout,
             phoneInputLayout, emailInputLayout, familyMembersInputLayout, spouseNameInputLayout,
             occupationInputLayout, companyInputLayout, incomeInputLayout, socialAidDetailInputLayout,
-            currentAddressInputLayout, reasonInputLayout, signatureInputLayout
+            currentAddressInputLayout, reasonInputLayout, signatureInputLayout,
+            houseQuestion1InputLayout, houseQuestion2InputLayout, houseQuestion3InputLayout,
+            apartmentQuestion1InputLayout, apartmentQuestion2InputLayout, apartmentQuestion3InputLayout
         )
 
         val textInputEditTexts = listOf(
             nameEditText, nikEditText, birthplaceEditText, addressEditText,
             phoneEditText, emailEditText, familyMembersEditText, spouseNameEditText,
             occupationEditText, companyEditText, incomeEditText, socialAidDetailEditText,
-            currentAddressEditText, reasonEditText, signatureEditText
+            currentAddressEditText, reasonEditText, signatureEditText,
+            houseQuestion1EditText, houseQuestion2EditText, houseQuestion3EditText,
+            apartmentQuestion1EditText, apartmentQuestion2EditText, apartmentQuestion3EditText
         )
 
         for (i in textInputLayouts.indices) {
@@ -342,7 +486,7 @@ class FormActivity : AppCompatActivity() {
         // Set up radio group change listeners
         val radioGroups = listOf(
             genderRadioGroup, maritalStatusRadioGroup, socialAidRadioGroup,
-            housingStatusRadioGroup, housingConditionRadioGroup
+            housingStatusRadioGroup, housingConditionRadioGroup, assistanceTypeRadioGroup
         )
 
         for (radioGroup in radioGroups) {
@@ -450,6 +594,43 @@ class FormActivity : AppCompatActivity() {
             isValid = false
         }
 
+        // Validate assistance type selection
+        if (assistanceTypeRadioGroup.checkedRadioButtonId == -1) {
+            Toast.makeText(this, "Pilih jenis bantuan yang diajukan", Toast.LENGTH_SHORT).show()
+            isValid = false
+        } else {
+            // Validate assistance type specific questions
+            when (assistanceTypeRadioGroup.checkedRadioButtonId) {
+                R.id.houseAssistanceRadioButton -> {
+                    val houseQuestionFields = listOf(
+                        Pair(houseQuestion1InputLayout, houseQuestion1EditText.text.toString()),
+                        Pair(houseQuestion2InputLayout, houseQuestion2EditText.text.toString()),
+                        Pair(houseQuestion3InputLayout, houseQuestion3EditText.text.toString())
+                    )
+
+                    for ((layout, value) in houseQuestionFields) {
+                        if (!validateField(layout, value)) {
+                            isValid = false
+                        }
+                    }
+                }
+
+                R.id.apartmentAssistanceRadioButton -> {
+                    val apartmentQuestionFields = listOf(
+                        Pair(apartmentQuestion1InputLayout, apartmentQuestion1EditText.text.toString()),
+                        Pair(apartmentQuestion2InputLayout, apartmentQuestion2EditText.text.toString()),
+                        Pair(apartmentQuestion3InputLayout, apartmentQuestion3EditText.text.toString())
+                    )
+
+                    for ((layout, value) in apartmentQuestionFields) {
+                        if (!validateField(layout, value)) {
+                            isValid = false
+                        }
+                    }
+                }
+            }
+        }
+
         // Validate social aid detail if "Yes" is selected
         if (socialAidYesRadioButton.isChecked && socialAidDetailEditText.text.toString().isBlank()) {
             socialAidDetailInputLayout.error = "Harap sebutkan bantuan sosial yang diterima"
@@ -498,7 +679,52 @@ class FormActivity : AppCompatActivity() {
     }
 
     private fun saveFormData() {
-        // This is a placeholder - you would need to adapt this to your actual FormData structure
+        // Save form data to FormData object
+        formData.name = nameEditText.text.toString()
+        formData.nik = nikEditText.text.toString()
+        formData.nikPhotoPath = ktpDocPath
+        formData.familyCardPhotoPath = kkDocPath
+        formData.address = addressEditText.text.toString()
+        formData.currentAddress = currentAddressEditText.text.toString()
+        formData.hometownAddress = birthplaceEditText.text.toString()
+
+        // Save gender
+        formData.gender = when (genderRadioGroup.checkedRadioButtonId) {
+            R.id.maleRadioButton -> "Laki-laki"
+            R.id.femaleRadioButton -> "Perempuan"
+            else -> ""
+        }
+
+        // Save marital status
+        formData.maritalStatus = when (maritalStatusRadioGroup.checkedRadioButtonId) {
+            R.id.singleRadioButton -> "Belum Menikah"
+            R.id.marriedRadioButton -> "Menikah"
+            R.id.widowedRadioButton -> "Duda/Janda"
+            else -> ""
+        }
+
+        formData.numberOfChildren = familyMembersEditText.text.toString()
+        formData.occupation = occupationEditText.text.toString()
+        formData.monthlyIncome = incomeEditText.text.toString()
+        formData.phone = phoneEditText.text.toString()
+
+        // Save assistance type specific data
+        when (assistanceTypeRadioGroup.checkedRadioButtonId) {
+            R.id.houseAssistanceRadioButton -> {
+                formData.landSize = houseQuestion1EditText.text.toString()
+                formData.certificateType = houseQuestion2EditText.text.toString()
+                formData.financingInterest = houseQuestion3EditText.text.toString()
+            }
+            R.id.apartmentAssistanceRadioButton -> {
+                formData.locationProvince = apartmentQuestion1EditText.text.toString()
+                formData.locationCity = apartmentQuestion2EditText.text.toString()
+                formData.locationDistrict = apartmentQuestion3EditText.text.toString()
+            }
+        }
+
+        // Save form data to storage
+        FormData.save(this, formData)
+
         Toast.makeText(this, "Data berhasil disimpan", Toast.LENGTH_SHORT).show()
         formChanged = false
     }

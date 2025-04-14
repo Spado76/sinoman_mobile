@@ -726,6 +726,146 @@
                     android:text="Unggah" />
             </LinearLayout>
 
+            <!-- JENIS BANTUAN SECTION -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="Jenis Bantuan yang Diajukan"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/assistanceTypeRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/houseAssistanceRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bantuan Rumah" />
+
+                <RadioButton
+                    android:id="@+id/apartmentAssistanceRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bantuan Rusun" />
+            </RadioGroup>
+
+            <!-- Bantuan Rumah Questions -->
+            <LinearLayout
+                android:id="@+id/houseAssistanceQuestionsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/houseQuestion1InputLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Berapa luas tanah yang Anda miliki? (m²)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/houseQuestion1EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/houseQuestion2InputLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Apakah Anda memiliki sertifikat tanah? (Ya/Tidak)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/houseQuestion2EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/houseQuestion3InputLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Berapa anggaran yang Anda siapkan untuk pembangunan? (Rp)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/houseQuestion3EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- Bantuan Rusun Questions -->
+            <LinearLayout
+                android:id="@+id/apartmentAssistanceQuestionsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/apartmentQuestion1InputLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Lokasi rusun yang diinginkan?">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/apartmentQuestion1EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/apartmentQuestion2InputLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Berapa jumlah kamar yang dibutuhkan?">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/apartmentQuestion2EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/apartmentQuestion3InputLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Berapa anggaran sewa bulanan yang Anda siapkan? (Rp)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/apartmentQuestion3EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
             <!-- PERSETUJUAN SECTION -->
             <TextView
                 android:layout_width="match_parent"
@@ -783,7 +923,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/dark_blue"
-                android:text="Simpan"
+                android:text="Kirim"
                 android:textColor="@color/white" />
 
         </LinearLayout>
