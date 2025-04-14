@@ -188,22 +188,8 @@ class ProfileActivity : AppCompatActivity() {
 
         // Cancel button
         cancelButton.setOnClickListener {
-            // Restore original values
-            usernameEditText.setText(originalUsername)
-            aboutMeEditText.setText(originalAboutMe)
-
-            // Restore original profile image
-            if (originalProfileImageUri != null) {
-                profileImageView.setImageURI(originalProfileImageUri)
-            } else {
-                profileImageView.setImageResource(R.drawable.ic_nav_profile)
-            }
-
-            newProfileImageUri = null
-
-            // Hide action buttons
-            actionButtonsLayout.visibility = View.GONE
-            isEditing = false
+            // Show confirmation dialog
+            showDiscardChangesDialog()
         }
 
         // Save button
@@ -235,6 +221,25 @@ class ProfileActivity : AppCompatActivity() {
             actionButtonsLayout.visibility = View.GONE
             isEditing = false
         }
+    }
+
+    private fun discardChanges() {
+        // Restore original values
+        usernameEditText.setText(originalUsername)
+        aboutMeEditText.setText(originalAboutMe)
+
+        // Restore original profile image
+        if (originalProfileImageUri != null) {
+            profileImageView.setImageURI(originalProfileImageUri)
+        } else {
+            profileImageView.setImageResource(R.drawable.ic_nav_profile)
+        }
+
+        newProfileImageUri = null
+
+        // Hide action buttons
+        actionButtonsLayout.visibility = View.GONE
+        isEditing = false
     }
 
     private fun saveProfileChanges() {
@@ -321,8 +326,8 @@ class ProfileActivity : AppCompatActivity() {
             .setTitle("Batalkan Perubahan")
             .setMessage("Anda memiliki perubahan yang belum disimpan. Apakah Anda ingin membuang perubahan ini?")
             .setPositiveButton("Ya") { _, _ ->
-                // Discard changes and go back
-                onBackPressed()
+                // Discard changes
+                discardChanges()
             }
             .setNegativeButton("Tidak", null)
             .show()
