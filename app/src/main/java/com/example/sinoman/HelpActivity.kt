@@ -33,7 +33,6 @@ class HelpActivity : AppCompatActivity() {
 
         // Initialize views
         emailAddressTextView = findViewById(R.id.emailAddressTextView)
-        phoneNumberTextView = findViewById(R.id.phoneNumberTextView)
         startChatButton = findViewById(R.id.startChatButton)
         viewMapButton = findViewById(R.id.viewMapButton)
         faqContainer = findViewById(R.id.faqContainer)
@@ -50,14 +49,6 @@ class HelpActivity : AppCompatActivity() {
                 putExtra(Intent.EXTRA_SUBJECT, "Bantuan Sinoman")
             }
             startActivity(Intent.createChooser(intent, "Kirim Email"))
-        }
-
-        // Set up phone click listener
-        phoneNumberTextView.setOnClickListener {
-            val intent = Intent(Intent.ACTION_DIAL).apply {
-                data = Uri.parse("tel:0211234567")
-            }
-            startActivity(intent)
         }
 
         // Set up WhatsApp chat button
@@ -81,12 +72,6 @@ class HelpActivity : AppCompatActivity() {
 
         // Set up FAQ section
         setupFaqSection()
-
-        // Set up bottom navigation if it exists in the layout
-        if (findViewById<BottomNavigationView>(R.id.bottomNavigation) != null) {
-            bottomNavigation = findViewById(R.id.bottomNavigation)
-            setupBottomNavigation()
-        }
     }
 
     private fun setupFaqSection() {
