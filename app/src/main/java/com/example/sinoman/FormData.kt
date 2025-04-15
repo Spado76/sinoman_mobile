@@ -42,6 +42,11 @@ data class FormData(
     var locationDistrict: String = "",
     var locationVillage: String = "",
 
+    // Location data (for house assistance)
+    var latitude: Double = 0.0,
+    var longitude: Double = 0.0,
+    var locationAddress: String = "",
+
     // Legacy fields (keeping for backward compatibility)
     var address: String = "",
     var phone: String = "",
@@ -112,6 +117,10 @@ data class FormData(
             if (formData.monthlyExpenses.isNotBlank()) filledFields++
             totalFields += 17
 
+            if (formData.latitude != 0.0 && formData.longitude != 0.0) filledFields++
+            if (formData.locationAddress.isNotBlank()) filledFields++
+            totalFields += 2
+
             return if (totalFields > 0) (filledFields * 100) / totalFields else 0
         }
 
@@ -132,7 +141,10 @@ data class FormData(
                     formData.occupation.isNotBlank() &&
                     formData.monthlyIncome.isNotBlank() &&
                     formData.monthlyAllowance.isNotBlank() &&
-                    formData.monthlyExpenses.isNotBlank()
+                    formData.monthlyExpenses.isNotBlank() &&
+                    formData.latitude != 0.0 &&
+                    formData.longitude != 0.0 &&
+                    formData.locationAddress.isNotBlank()
         }
 
         fun isAnyFieldFilled(formData: FormData): Boolean {
@@ -301,4 +313,3 @@ enum class RegistrationStatus {
     ACCEPTED,     // Diterima
     REJECTED      // Ditolak
 }
-

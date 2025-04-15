@@ -8,6 +8,8 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        manifestPlaceholders["MAPS_API_KEY"] = project.findProperty("MAPS_API_KEY") as String
+
         applicationId = "com.example.sinoman"
         minSdk = 24
         targetSdk = 35
@@ -46,6 +48,8 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.google.code.gson:gson:2.12.1")
     implementation("com.github.CanHub:Android-Image-Cropper:4.3.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

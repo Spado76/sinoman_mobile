@@ -1,8 +1,14 @@
 package com.example.sinoman
 
+import android.Manifest
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
@@ -10,6 +16,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -19,10 +26,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -127,6 +139,24 @@ class FormActivity : AppCompatActivity() {
     private lateinit var apartmentQuestion3EditText: TextInputEditText
     private lateinit var apartmentQuestion3InputLayout: TextInputLayout
 
+    // Location
+    private lateinit var getCurrentLocationButton: Button
+    private lateinit var selectLocationButton: Button
+    private lateinit var locationPreviewContainer: View
+    private lateinit var latitudeEditText: TextInputEditText
+    private lateinit var longitudeEditText: TextInputEditText
+    private lateinit var locationAddressEditText: TextInputEditText
+    private lateinit var locationAddressInputLayout: TextInputLayout
+    private lateinit var locationPreviewImage: ImageView
+    private lateinit var locationPreviewPlaceholder: TextView
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val locationPermissionCode = 2000
+    private val mapPickerRequestCode = 2001
+
+    private var latitude = 0.0
+    private var longitude = 0.0
+
     // Agreement
     private lateinit var agreementCheckBox: CheckBox
     private lateinit var signatureEditText: TextInputEditText
@@ -204,6 +234,9 @@ class FormActivity : AppCompatActivity() {
 
         // Set up assistance type radio group
         setupAssistanceTypeRadioGroup()
+
+        // Set up location buttons
+        setupLocationButtons()
 
         // Set up save button
         saveButton.text = "Kirim"
@@ -353,6 +386,20 @@ class FormActivity : AppCompatActivity() {
         apartmentQuestion3EditText = findViewById(R.id.apartmentQuestion3EditText)
         apartmentQuestion3InputLayout = findViewById(R.id.apartmentQuestion3InputLayout)
 
+        // Location-related views
+        getCurrentLocationButton = findViewById(R.id.getCurrentLocationButton)
+        selectLocationButton = findViewById(R.id.selectLocationButton)
+        locationPreviewContainer = findViewById(R.id.locationPreviewContainer)
+        latitudeEditText = findViewById(R.id.latitudeEditText)
+        longitudeEditText = findViewById(R.id.longitudeEditText)
+        locationAddressEditText = findViewById(R.id.locationAddressEditText)
+        locationAddressInputLayout = findViewById(R.id.locationAddressInputLayout)
+        locationPreviewImage = findViewById(R.id.locationPreviewImage)
+        locationPreviewPlaceholder = findViewById(R.id.locationPreviewPlaceholder)
+
+        // Initialize FusedLocationProviderClient
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         // Agreement
         agreementCheckBox = findViewById(R.id.agreementCheckBox)
         signatureEditText = findViewById(R.id.signatureEditText)
@@ -460,6 +507,184 @@ class FormActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupLocationButtons() {
+        getCurrentLocationButton.setOnClickListener {
+            requestLocationPermissions()
+        }
+
+        selectLocationButton.setOnClickListener {
+            val intent = Intent(this, LocationPickerActivity::class.java)
+            // If we already have coordinates, pass them to the picker
+            if (latitude != 0.0 && longitude != 0.0) {
+                intent.putExtra(LocationPickerActivity.EXTRA_LATITUDE, latitude)
+                intent.putExtra(LocationPickerActivity.EXTRA_LONGITUDE, longitude)
+            }
+            startActivityForResult(intent, mapPickerRequestCode)
+        }
+    }
+
+    private fun requestLocationPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                locationPermissionCode
+            )
+        } else {
+            getCurrentLocation()
+        }
+    }
+
+    private fun getCurrentLocation() {
+        try {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(this, "Mendapatkan lokasi...", Toast.LENGTH_SHORT).show()
+
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location ->
+                        if (location != null) {
+                            // Got the location
+                            updateLocationUi(
+                                location.latitude,
+                                location.longitude
+                            )
+
+                            // Get address from location
+                            getAddressFromLocation(location)
+                        } else {
+                            Toast.makeText(
+                                this,
+                                "Lokasi tidak tersedia. Silakan coba lagi nanti atau gunakan 'Pilih di Peta'.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(
+                            this,
+                            "Gagal mendapatkan lokasi: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+        } catch (e: SecurityException) {
+            Toast.makeText(
+                this,
+                "Error izin lokasi: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun getAddressFromLocation(location: Location) {
+        val geocoder = Geocoder(this, Locale.getDefault())
+
+        try {
+            val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+            if (!addresses.isNullOrEmpty()) {
+                val address = addresses[0]
+                val addressText = buildAddressString(address)
+                locationAddressEditText.setText(addressText)
+            } else {
+                locationAddressEditText.setText("Alamat tidak ditemukan")
+            }
+        } catch (e: IOException) {
+            locationAddressEditText.setText("Error: ${e.message}")
+        }
+    }
+
+    private fun buildAddressString(address: Address): String {
+        val sb = StringBuilder()
+
+        for (i in 0..address.maxAddressLineIndex) {
+            sb.append(address.getAddressLine(i))
+            if (i < address.maxAddressLineIndex) {
+                sb.append(", ")
+            }
+        }
+
+        return sb.toString()
+    }
+
+    private fun updateLocationUi(lat: Double, lng: Double) {
+        // Update class variables
+        latitude = lat
+        longitude = lng
+
+        // Update UI
+        latitudeEditText.setText(String.format(Locale.US, "%.6f", lat))
+        longitudeEditText.setText(String.format(Locale.US, "%.6f", lng))
+
+        // Show the location preview container
+        locationPreviewContainer.visibility = View.VISIBLE
+
+        // Create a static map URL (simplified for this example)
+        // In a real app, you'd load an actual map or use static maps API
+
+        // For now just show the coordinates
+        locationPreviewPlaceholder.visibility = View.VISIBLE
+        locationPreviewPlaceholder.text = "Lokasi: $lat, $lng"
+
+        // Mark that form has changed
+        formChanged = true
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            locationPermissionCode -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getCurrentLocation()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Izin lokasi diperlukan untuk fitur ini",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == mapPickerRequestCode && resultCode == Activity.RESULT_OK && data != null) {
+            // Get the selected location from the location picker
+            val selectedLatitude = data.getDoubleExtra(LocationPickerActivity.EXTRA_LATITUDE, 0.0)
+            val selectedLongitude = data.getDoubleExtra(LocationPickerActivity.EXTRA_LONGITUDE, 0.0)
+            val selectedAddress = data.getStringExtra(LocationPickerActivity.EXTRA_ADDRESS) ?: ""
+
+            // Update UI with the selected location
+            updateLocationUi(selectedLatitude, selectedLongitude)
+            locationAddressEditText.setText(selectedAddress)
+        }
+    }
+
     private fun populateFormWithData() {
         // Personal Data
         nameEditText.setText(formData.name)
@@ -522,6 +747,18 @@ class FormActivity : AppCompatActivity() {
                 apartmentAssistanceRadioButton.isChecked = true
                 apartmentAssistanceQuestionsLayout.visibility = View.VISIBLE
             }
+        }
+
+        // Set location data if available
+        if (formData.latitude != 0.0 && formData.longitude != 0.0) {
+            latitude = formData.latitude
+            longitude = formData.longitude
+            latitudeEditText.setText(String.format(Locale.US, "%.6f", formData.latitude))
+            longitudeEditText.setText(String.format(Locale.US, "%.6f", formData.longitude))
+            locationAddressEditText.setText(formData.locationAddress)
+            locationPreviewContainer.visibility = View.VISIBLE
+            locationPreviewPlaceholder.visibility = View.VISIBLE
+            locationPreviewPlaceholder.text = "Lokasi: ${formData.latitude}, ${formData.longitude}"
         }
     }
 
@@ -754,6 +991,19 @@ class FormActivity : AppCompatActivity() {
                             isValid = false
                         }
                     }
+
+                    // Add location validation
+                    if (latitude == 0.0 || longitude == 0.0) {
+                        Toast.makeText(this, "Silakan pilih lokasi tanah/bangunan", Toast.LENGTH_SHORT).show()
+                        isValid = false
+                    }
+
+                    if (locationAddressEditText.text.toString().isBlank()) {
+                        locationAddressInputLayout.error = "Alamat lokasi harus diisi"
+                        isValid = false
+                    } else {
+                        locationAddressInputLayout.error = null
+                    }
                 }
 
                 R.id.apartmentAssistanceRadioButton -> {
@@ -848,6 +1098,11 @@ class FormActivity : AppCompatActivity() {
         formData.occupation = occupationEditText.text.toString()
         formData.monthlyIncome = incomeEditText.text.toString()
         formData.phone = phoneEditText.text.toString()
+
+        // Save location data
+        formData.latitude = latitude
+        formData.longitude = longitude
+        formData.locationAddress = locationAddressEditText.text.toString()
 
         // Save assistance type specific data
         when (assistanceTypeRadioGroup.checkedRadioButtonId) {
