@@ -152,7 +152,7 @@ class HelpActivity : AppCompatActivity() {
             FaqItem(
                 id = "assistance_types",
                 question = "Apa saja jenis bantuan yang tersedia?",
-                answer = "Terdapat dua jenis bantuan utama: 'Bantuan Rumah', dan 'Bantuan Rusun'."
+                answer = "Terdapat dua jenis bantuan: 'Bantuan Rumah', dan 'Bantuan Rusun'."
             )
         )
     }
