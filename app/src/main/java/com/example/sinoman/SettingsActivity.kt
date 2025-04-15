@@ -97,18 +97,6 @@ class SettingsActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.manageSessionsButton).setOnClickListener {
             // Handle session management
         }
-        
-        findViewById<TextView>(R.id.changeRecoveryEmailButton).setOnClickListener {
-            // Handle recovery email change
-        }
-        
-        findViewById<TextView>(R.id.changeRecoveryPhoneButton).setOnClickListener {
-            // Handle recovery phone change
-        }
-        
-        findViewById<TextView>(R.id.deleteAccountButton).setOnClickListener {
-            // Handle account deletion
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
