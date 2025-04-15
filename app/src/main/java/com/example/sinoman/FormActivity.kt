@@ -26,6 +26,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import android.text.InputFilter
+import android.text.Spanned
+import android.text.TextWatcher
 
 class FormActivity : AppCompatActivity() {
 
@@ -267,6 +270,33 @@ class FormActivity : AppCompatActivity() {
         registrationDateInputLayout = findViewById(R.id.registrationDateInputLayout)
 
         saveButton = findViewById(R.id.saveButton)
+
+        // Set input filters to limit family members and child ages to 2 digits
+        val twoDigitFilter = InputFilter.LengthFilter(2)
+        val numberFilter = object : InputFilter {
+            override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned, dstart: Int, dend: Int): CharSequence? {
+                for (i in start until end) {
+                    if (!Character.isDigit(source[i])) {
+                        return ""
+                    }
+                }
+                return null
+            }
+        }
+
+        // Apply filters to family members field
+        familyMembersEditText.filters = arrayOf(twoDigitFilter, numberFilter)
+        familyMembersEditText.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+
+        // Apply filters to child age fields
+        child1AgeEditText.filters = arrayOf(twoDigitFilter, numberFilter)
+        child1AgeEditText.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+
+        child2AgeEditText.filters = arrayOf(twoDigitFilter, numberFilter)
+        child2AgeEditText.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+
+        child3AgeEditText.filters = arrayOf(twoDigitFilter, numberFilter)
+        child3AgeEditText.inputType = android.text.InputType.TYPE_CLASS_NUMBER
     }
 
     private fun setupDocumentButtons() {
@@ -386,6 +416,46 @@ class FormActivity : AppCompatActivity() {
 
         // Initialize social aid detail visibility
         socialAidDetailInputLayout.visibility = View.GONE
+
+        // Add text changed listener for family members field
+        familyMembersEditText.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: android.text.Editable?) {
+                if (!s.isNullOrEmpty() && s.toString().toIntOrNull() != null) {
+                    val value = s.toString().toInt()
+                    if (value > 99) {
+                        familyMembersEditText.setText("99")
+                        familyMembersEditText.setSelection(2)
+                    }
+                }
+                formChanged = true
+            }
+        })
+
+        // Add text changed listeners for child age fields
+        val childAgeFields = listOf(child1AgeEditText, child2AgeEditText, child3AgeEditText)
+
+        for (ageField in childAgeFields) {
+            ageField.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    if (!s.isNullOrEmpty() && s.toString().toIntOrNull() != null) {
+                        val value = s.toString().toInt()
+                        if (value > 99) {
+                            ageField.setText("99")
+                            ageField.setSelection(2)
+                        }
+                    }
+                    formChanged = true
+                }
+            })
+        }
     }
 
     private fun validateField(inputLayout: TextInputLayout, value: String): Boolean {
@@ -421,6 +491,36 @@ class FormActivity : AppCompatActivity() {
         for ((layout, value) in requiredFields) {
             if (!validateField(layout, value)) {
                 isValid = false
+            }
+        }
+
+        // Validate family members count is within reasonable range (1-99)
+        val familyMembersText = familyMembersEditText.text.toString()
+        if (familyMembersText.isNotBlank()) {
+            val familyMembersCount = familyMembersText.toInt()
+            if (familyMembersCount < 1) {
+                familyMembersInputLayout.error = "Jumlah anggota keluarga minimal 1"
+                isValid = false
+            } else {
+                familyMembersInputLayout.error = null
+            }
+        }
+
+        // Validate child ages are within reasonable range (0-99)
+        val childAgeFields = listOf(
+            Pair(child1AgeEditText, "Anak 1"),
+            Pair(child2AgeEditText, "Anak 2"),
+            Pair(child3AgeEditText, "Anak 3")
+        )
+
+        for ((ageField, childLabel) in childAgeFields) {
+            val ageText = ageField.text.toString()
+            if (ageText.isNotBlank()) {
+                val age = ageText.toInt()
+                if (age < 0 || age > 99) {
+                    Toast.makeText(this, "$childLabel: Umur harus antara 0-99 tahun", Toast.LENGTH_SHORT).show()
+                    isValid = false
+                }
             }
         }
 
@@ -578,5 +678,28 @@ class FormActivity : AppCompatActivity() {
             }
             .setCancelable(true)
             .show()
+    }
+
+    // Add a helper method to validate numeric input with max value
+    // Add this method to the FormActivity class
+    private fun validateNumericField(inputLayout: TextInputLayout, value: String, fieldName: String, maxValue: Int): Boolean {
+        if (value.isBlank()) {
+            inputLayout.error = "Field ini harus diisi"
+            return false
+        }
+
+        try {
+            val numValue = value.toInt()
+            if (numValue < 0 || numValue > maxValue) {
+                inputLayout.error = "$fieldName harus antara 0-$maxValue"
+                return false
+            }
+        } catch (e: NumberFormatException) {
+            inputLayout.error = "$fieldName harus berupa angka"
+            return false
+        }
+
+        inputLayout.error = null
+        return true
     }
 }
