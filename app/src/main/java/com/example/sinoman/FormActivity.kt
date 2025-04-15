@@ -206,10 +206,51 @@ class FormActivity : AppCompatActivity() {
         setupAssistanceTypeRadioGroup()
 
         // Set up save button
+        saveButton.text = "Kirim"
         saveButton.setOnClickListener {
             if (validateForm()) {
                 saveFormData()
                 FormData.setPersonalDataCompleted(this, true)
+
+                // Create a new registration based on the selected assistance type
+                val registrationType = when (assistanceTypeRadioGroup.checkedRadioButtonId) {
+                    R.id.houseAssistanceRadioButton -> RegistrationType.HOUSE_OWNER
+                    R.id.apartmentAssistanceRadioButton -> RegistrationType.NON_HOUSE_OWNER
+                    else -> RegistrationType.HOUSE_OWNER // Default fallback
+                }
+
+                // Create and save the registration
+                val registration = RegistrationData(
+                    type = registrationType,
+                    status = RegistrationStatus.UNDER_REVIEW,
+                    dateCreated = System.currentTimeMillis(),
+                    dateUpdated = System.currentTimeMillis()
+                )
+
+                // Add specific data based on assistance type
+                if (registrationType == RegistrationType.HOUSE_OWNER) {
+                    registration.buildingSize = "N/A"
+                    registration.landSize = houseQuestion1EditText.text.toString()
+                    registration.certificateType = houseQuestion2EditText.text.toString()
+                    registration.financingInterest = houseQuestion3EditText.text.toString()
+                } else {
+                    registration.houseInterest = "N/A"
+                    registration.locationProvince = apartmentQuestion1EditText.text.toString()
+                    registration.locationCity = apartmentQuestion2EditText.text.toString()
+                    registration.locationDistrict = apartmentQuestion3EditText.text.toString()
+                    registration.locationVillage = "N/A"
+                }
+
+                RegistrationData.addOrUpdateRegistration(this, registration)
+
+                // Update shared preferences to indicate submission
+                val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                prefs.edit().putBoolean("has_submitted_application", true).apply()
+
+                // Update verification status to UNDER_REVIEW
+                prefs.edit().putInt("verification_status", DashboardActivity.STATUS_UNDER_REVIEW).apply()
+
+                // Navigate to FormPage2Activity
                 val intent = Intent(this, FormPage2Activity::class.java)
                 startActivity(intent)
                 finish() // Close this activity so user can't go back with back button

@@ -17,9 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 class FormPage2Activity : AppCompatActivity() {
 
-    private lateinit var editPersonalDataButton: Button
-    private lateinit var houseOwnerButton: Button
-    private lateinit var nonHouseOwnerButton: Button
     private lateinit var registrationsRecyclerView: RecyclerView
     private lateinit var emptyRegistrationsTextView: TextView
     private lateinit var registrationsAdapter: RegistrationsAdapter
@@ -30,9 +27,6 @@ class FormPage2Activity : AppCompatActivity() {
         setContentView(R.layout.activity_form_page2)
 
         // Initialize views
-        editPersonalDataButton = findViewById(R.id.editPersonalDataButton)
-        houseOwnerButton = findViewById(R.id.houseOwnerButton)
-        nonHouseOwnerButton = findViewById(R.id.nonHouseOwnerButton)
         registrationsRecyclerView = findViewById(R.id.registrationsRecyclerView)
         emptyRegistrationsTextView = findViewById(R.id.emptyRegistrationsTextView)
 
@@ -43,74 +37,11 @@ class FormPage2Activity : AppCompatActivity() {
 
         // Set up recycler view
         setupRecyclerView()
-
-        // Set up button click listeners
-        editPersonalDataButton.setOnClickListener {
-            val intent = Intent(this, FormActivity::class.java)
-            startActivity(intent)
-        }
-
-        houseOwnerButton.setOnClickListener {
-            if (RegistrationData.hasActiveRegistrationOfType(this, RegistrationType.NON_HOUSE_OWNER)) {
-                Toast.makeText(
-                    this,
-                    "Anda sudah memiliki pendaftaran bantuan untuk tidak punya rumah. Hapus pendaftaran tersebut terlebih dahulu.",
-                    Toast.LENGTH_LONG
-                ).show()
-                return@setOnClickListener
-            }
-
-            // Check if there's an existing in-progress registration
-            val existingRegistration = RegistrationData.getInProgressRegistration(this, RegistrationType.HOUSE_OWNER)
-            if (existingRegistration != null) {
-                // Continue with existing registration
-                val intent = Intent(this, FormPage3aActivity::class.java)
-                intent.putExtra("registration_id", existingRegistration.id)
-                startActivity(intent)
-            } else {
-                // Create new registration
-                val registration = RegistrationData(type = RegistrationType.HOUSE_OWNER)
-                RegistrationData.addOrUpdateRegistration(this, registration)
-
-                val intent = Intent(this, FormPage3aActivity::class.java)
-                intent.putExtra("registration_id", registration.id)
-                startActivity(intent)
-            }
-        }
-
-        nonHouseOwnerButton.setOnClickListener {
-            if (RegistrationData.hasActiveRegistrationOfType(this, RegistrationType.HOUSE_OWNER)) {
-                Toast.makeText(
-                    this,
-                    "Anda sudah memiliki pendaftaran bantuan untuk punya rumah. Hapus pendaftaran tersebut terlebih dahulu.",
-                    Toast.LENGTH_LONG
-                ).show()
-                return@setOnClickListener
-            }
-
-            // Check if there's an existing in-progress registration
-            val existingRegistration = RegistrationData.getInProgressRegistration(this, RegistrationType.NON_HOUSE_OWNER)
-            if (existingRegistration != null) {
-                // Continue with existing registration
-                val intent = Intent(this, FormPage3bActivity::class.java)
-                intent.putExtra("registration_id", existingRegistration.id)
-                startActivity(intent)
-            } else {
-                // Create new registration
-                val registration = RegistrationData(type = RegistrationType.NON_HOUSE_OWNER)
-                RegistrationData.addOrUpdateRegistration(this, registration)
-
-                val intent = Intent(this, FormPage3bActivity::class.java)
-                intent.putExtra("registration_id", registration.id)
-                startActivity(intent)
-            }
-        }
     }
 
     override fun onResume() {
         super.onResume()
         loadRegistrations()
-        updateButtonsState()
     }
 
     private fun setupRecyclerView() {
@@ -149,49 +80,21 @@ class FormPage2Activity : AppCompatActivity() {
         }
     }
 
-    private fun updateButtonsState() {
-        // Check if there's any submitted application (regardless of type)
-        val hasSubmittedApplication = registrations.any {
-            it.status != RegistrationStatus.IN_PROGRESS
-        }
-
-        // Also check shared preferences for submission status
-        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val hasSubmittedInPrefs = prefs.getBoolean("has_submitted_application", false)
-
-        // If either condition is true, disable both buttons
-        if (hasSubmittedApplication || hasSubmittedInPrefs) {
-            houseOwnerButton.isEnabled = false
-            nonHouseOwnerButton.isEnabled = false
-
-            // Update button text to indicate why they're disabled
-            houseOwnerButton.text = "Pendaftaran Bantuan Rumah (Sudah Mendaftar)"
-            nonHouseOwnerButton.text = "Pendaftaran Bantuan Rusun (Sudah Mendaftar)"
-            return
-        }
-
-        // Reset button text if needed
-        houseOwnerButton.text = "Pendaftaran Bantuan Rumah"
-        nonHouseOwnerButton.text = "Pendaftaran Bantuan Rusun"
-
-        // Enable/disable buttons based on in-progress registrations
-
-        // If no submission yet, check for in-progress registrations
-        val hasHouseOwnerRegistration = RegistrationData.hasActiveRegistrationOfType(this, RegistrationType.HOUSE_OWNER)
-        val hasNonHouseOwnerRegistration = RegistrationData.hasActiveRegistrationOfType(this, RegistrationType.NON_HOUSE_OWNER)
-
-        houseOwnerButton.isEnabled = !hasNonHouseOwnerRegistration
-        nonHouseOwnerButton.isEnabled = !hasHouseOwnerRegistration
-    }
-
     private fun showDeleteConfirmationDialog(registration: RegistrationData) {
         AlertDialog.Builder(this)
             .setTitle("Hapus Pendaftaran")
             .setMessage("Apakah Anda yakin ingin menghapus pendaftaran ini?")
             .setPositiveButton("Ya") { _, _ ->
                 RegistrationData.deleteRegistration(this, registration.id)
+
+                // Reset submission status in shared preferences if needed
+                val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                prefs.edit().putBoolean("has_submitted_application", false).apply()
+
+                // Reset verification status if needed
+                prefs.edit().putInt("verification_status", DashboardActivity.STATUS_NOT_REGISTERED).apply()
+
                 loadRegistrations()
-                updateButtonsState()
                 Toast.makeText(this, "Pendaftaran berhasil dihapus", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Tidak", null)
@@ -200,10 +103,20 @@ class FormPage2Activity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            onBackPressed()
+            // Navigate to dashboard instead of going back
+            val intent = Intent(this, DashboardActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    // Override back button to go to dashboard
+    override fun onBackPressed() {
+        val intent = Intent(this, DashboardActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 }
 
@@ -254,4 +167,3 @@ class RegistrationsAdapter(
 
     override fun getItemCount() = registrations.size
 }
-
