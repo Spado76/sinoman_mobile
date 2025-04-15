@@ -137,7 +137,7 @@ class HelpActivity : AppCompatActivity() {
             FaqItem(
                 id = "queue_position",
                 question = "Bagaimana cara mengetahui posisi antrean saya?",
-                answer = "Anda dapat melihat posisi antrean di Dashboard aplikasi. Informasi antrean tersedia di kartu 'Status Verifikasi' yang menampilkan posisi dan estimasi waktu tunggu Anda."
+                answer = "Anda dapat melihat posisi antrean di web SINOMAN. Anda dapat mengakses nya dengan menekan tombol \"Cek Antrian\" pada halaman dashboard bagian pintasan."
             ),
             FaqItem(
                 id = "document_formats",
@@ -152,7 +152,7 @@ class HelpActivity : AppCompatActivity() {
             FaqItem(
                 id = "assistance_types",
                 question = "Apa saja jenis bantuan yang tersedia?",
-                answer = "Terdapat dua jenis bantuan utama: 'Bantuan Punya Rumah' untuk perbaikan atau renovasi rumah yang sudah dimiliki, dan 'Bantuan Tidak Punya Rumah' untuk bantuan pengadaan rumah baru."
+                answer = "Terdapat dua jenis bantuan utama: 'Bantuan Rumah', dan 'Bantuan Rusun'."
             )
         )
     }
