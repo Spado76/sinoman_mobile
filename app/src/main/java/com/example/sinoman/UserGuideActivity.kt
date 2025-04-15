@@ -109,33 +109,33 @@ class UserGuideActivity : AppCompatActivity() {
         return listOf(
             GuideSection(
                 id = "upload_document",
-                title = "Cara Mengunggah Dokumen",
+                title = "Cara Mendaftar Bantuan Rumah/Rusun",
                 iconResId = R.drawable.ic_document,
                 steps = listOf(
                     GuideStep(
                         number = 1,
-                        title = "Masuk ke menu Dokumen",
-                        description = "Klik menu \"Dokumen\" di sidebar navigasi untuk membuka halaman dokumen Anda."
+                        title = "Masuk ke menu Pendaftaran",
+                        description = "Klik menu \"Pendaftaran\" di navigasi bagian bawah untuk membuka halaman pendaftaran Anda."
                     ),
                     GuideStep(
                         number = 2,
-                        title = "Klik tombol \"Unggah Dokumen\"",
-                        description = "Anda akan menemukan tombol ini di bagian atas halaman dokumen."
+                        title = "Lengkapi formulir",
+                        description = "Lengkapi semua formulir dengan data-data Anda."
                     ),
                     GuideStep(
                         number = 3,
-                        title = "Pilih jenis dokumen",
-                        description = "Pilih jenis dokumen yang sesuai dari dropdown menu (KTP, KK, Slip Gaji, dll)."
+                        title = "Unggah dokumen",
+                        description = "Pada formulir bagian seperti mengunggah (KTP, KK, Slip Gaji, dll), tekan tombol \"Unggah\"."
                     ),
                     GuideStep(
                         number = 4,
-                        title = "Unggah file dokumen",
-                        description = "Seret file ke area yang disediakan atau klik untuk memilih file dari perangkat Anda.\nFormat yang didukung: PDF, JPG, PNG (maks. 5MB)"
+                        title = "Jawab semua pertanyaan",
+                        description = "Jawab semua pertanyaan yang tersedia sesua pilihan yang anda pilih (Bantuan Rumah/Bantuan Rusun)."
                     ),
                     GuideStep(
                         number = 5,
                         title = "Klik \"Kirim\"",
-                        description = "Setelah dokumen terunggah, klik tombol kirim untuk mengirim dokumen ke sistem."
+                        description = "Setelah dokumen terunggah dan semua field terisi, klik tombol kirim untuk mengirim dokumen ke sistem."
                     )
                 )
             ),
@@ -147,49 +147,17 @@ class UserGuideActivity : AppCompatActivity() {
                     GuideStep(
                         number = 1,
                         title = "Masuk ke Dashboard",
-                        description = "Klik menu \"Dashboard\" di navigasi utama."
+                        description = "Pada halaman \"Dashboard\", scroll kebagian paling bawah, lalu tekan \"Cek Antrian\"."
                     ),
                     GuideStep(
                         number = 2,
-                        title = "Lihat kartu Status Verifikasi",
-                        description = "Pada dashboard, cari kartu dengan judul \"Status Verifikasi\"."
+                        title = "Masuk ke web SINOMAN",
+                        description = "Klik tombol \"Login\" pada bagian navigasi atas, lalu masuk menggunakan email dan password."
                     ),
                     GuideStep(
                         number = 3,
                         title = "Cek posisi antrean",
-                        description = "Posisi antrean Anda akan ditampilkan beserta estimasi waktu tunggu."
-                    )
-                )
-            ),
-            GuideSection(
-                id = "application_process",
-                title = "Proses Pengajuan Bantuan",
-                iconResId = R.drawable.ic_document_blue,
-                steps = listOf(
-                    GuideStep(
-                        number = 1,
-                        title = "Lengkapi data pribadi",
-                        description = "Isi semua data pribadi yang diminta pada form pendaftaran."
-                    ),
-                    GuideStep(
-                        number = 2,
-                        title = "Pilih jenis bantuan",
-                        description = "Pilih antara \"Bantuan Punya Rumah\" atau \"Bantuan Tidak Punya Rumah\"."
-                    ),
-                    GuideStep(
-                        number = 3,
-                        title = "Lengkapi data bantuan",
-                        description = "Isi formulir sesuai dengan jenis bantuan yang dipilih."
-                    ),
-                    GuideStep(
-                        number = 4,
-                        title = "Unggah dokumen pendukung",
-                        description = "Unggah semua dokumen yang diperlukan sesuai petunjuk."
-                    ),
-                    GuideStep(
-                        number = 5,
-                        title = "Kirim pengajuan",
-                        description = "Tinjau semua informasi dan klik \"Kirim\" untuk mengirimkan pengajuan."
+                        description = "Pada bagian dashboard utama, posisi antrean Anda akan ditampilkan beserta total skornya."
                     )
                 )
             ),
@@ -201,7 +169,7 @@ class UserGuideActivity : AppCompatActivity() {
                     GuideStep(
                         number = 1,
                         title = "Buka halaman profil",
-                        description = "Klik menu \"Profil Saya\" di sidebar navigasi."
+                        description = "Klik menu \"Profil\" di navigasi bagian bawah."
                     ),
                     GuideStep(
                         number = 2,
