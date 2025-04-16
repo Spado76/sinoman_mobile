@@ -61,14 +61,6 @@
             android:exported="true" />
 
         <activity
-            android:name=".FormPage3aActivity"
-            android:exported="true" />
-
-        <activity
-            android:name=".FormPage3bActivity"
-            android:exported="true" />
-
-        <activity
             android:name=".ProfileActivity"
             android:exported="true" />
 

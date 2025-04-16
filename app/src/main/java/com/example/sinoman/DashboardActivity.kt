@@ -18,6 +18,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,6 +46,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var bottomNavigation: BottomNavigationView
+
+    private lateinit var contentView: CoordinatorLayout
 
     // Dashboard UI elements
     private lateinit var welcomeTextView: TextView
@@ -111,6 +114,10 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         navigationView = findViewById(R.id.navigationView)
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
+        // Get the CoordinatorLayout (main content container)
+        // This is the first child of the DrawerLayout
+        contentView = drawerLayout.getChildAt(0) as CoordinatorLayout
+
         // Initialize dashboard UI elements
         welcomeTextView = findViewById(R.id.welcomeTextView)
         verificationStatusTextView = findViewById(R.id.verificationStatusTextView)
@@ -154,6 +161,30 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+
+        // Add a drawer listener to provide visual feedback during swipe
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                // Animate the main content as the drawer slides
+                val moveFactor = drawerView.width * slideOffset * 0.3f
+                contentView.translationX = moveFactor
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+                // Optional: actions when drawer is fully opened
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                // Optional: actions when drawer is fully closed
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+                // Optional: actions when drawer state changes
+            }
+        })
+
+        // Ensure the drawer can be opened with edge swipes
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
         // Set up navigation listeners
         navigationView.setNavigationItemSelectedListener(this)
