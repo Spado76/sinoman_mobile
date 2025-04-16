@@ -864,6 +864,12 @@
                         android:text="Lokasi akan ditampilkan di sini"
                         android:textColor="@color/dark_gray" />
 
+                    <com.google.android.gms.maps.MapView
+                        android:id="@+id/mapView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
                     <ImageView
                         android:id="@+id/locationPreviewImage"
                         android:layout_width="match_parent"

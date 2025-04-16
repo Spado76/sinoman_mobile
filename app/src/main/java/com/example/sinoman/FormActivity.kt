@@ -42,6 +42,19 @@ import java.util.Locale
 import android.text.InputFilter
 import android.text.Spanned
 import android.text.TextWatcher
+import android.location.LocationManager
+import android.provider.Settings
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
 class FormActivity : AppCompatActivity() {
 
@@ -100,7 +113,7 @@ class FormActivity : AppCompatActivity() {
     private lateinit var currentAddressInputLayout: TextInputLayout
     private lateinit var housingConditionRadioGroup: RadioGroup
     private lateinit var goodConditionRadioButton: RadioButton
-    private lateinit var badConditionRadioButton: RadioButton
+    private lateinit var badConditionRadioButton: Button
     private lateinit var reasonEditText: TextInputEditText
     private lateinit var reasonInputLayout: TextInputLayout
 
@@ -207,12 +220,20 @@ class FormActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var mapView: MapView
+    private var googleMap: GoogleMap? = null
+    private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
+    private val LOCATION_SETTINGS_REQUEST_CODE = 2002
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_form)
 
         // Initialize views
         initializeViews()
+
+        // Initialize map view
+        initializeMapView(savedInstanceState)
 
         // Set up toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -437,6 +458,61 @@ class FormActivity : AppCompatActivity() {
         child3AgeEditText.inputType = android.text.InputType.TYPE_CLASS_NUMBER
     }
 
+    private fun initializeMapView(savedInstanceState: Bundle?) {
+        // Initialize MapView
+        mapView = findViewById(R.id.mapView)
+
+        // Create Bundle for MapView if needed
+        var mapViewBundle: Bundle? = null
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY)
+        }
+
+        // Initialize and setup MapView
+        mapView.onCreate(mapViewBundle)
+        mapView.getMapAsync(object : OnMapReadyCallback {
+            override fun onMapReady(map: GoogleMap) {
+                googleMap = map
+                googleMap?.uiSettings?.isZoomControlsEnabled = true
+                googleMap?.uiSettings?.isCompassEnabled = true
+
+                // If we already have coordinates, show them on the map
+                if (latitude != 0.0 && longitude != 0.0) {
+                    showLocationOnMap(latitude, longitude)
+                }
+            }
+        })
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    private fun showLocationServicesDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Lokasi Tidak Aktif")
+            .setMessage("Layanan lokasi dinonaktifkan. Silakan aktifkan untuk menggunakan fitur ini.")
+            .setPositiveButton("Pengaturan") { _, _ ->
+                // Open location settings
+                startActivityForResult(
+                    Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                    LOCATION_SETTINGS_REQUEST_CODE
+                )
+            }
+            .setNegativeButton("Batal") { dialog, _ ->
+                dialog.dismiss()
+                Toast.makeText(
+                    this,
+                    "Fitur ini memerlukan akses lokasi",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
     private fun setupDocumentButtons() {
         ktpUploadButton.setOnClickListener {
             currentDocType = "ktp"
@@ -524,6 +600,13 @@ class FormActivity : AppCompatActivity() {
     }
 
     private fun requestLocationPermissions() {
+        // First check if location services are enabled
+        if (!isLocationEnabled()) {
+            showLocationServicesDialog()
+            return
+        }
+
+        // Then check for permissions
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -625,6 +708,42 @@ class FormActivity : AppCompatActivity() {
         return sb.toString()
     }
 
+    private fun bitmapDescriptorFromVector(vectorResId: Int): BitmapDescriptor {
+        val vectorDrawable = ContextCompat.getDrawable(this, vectorResId)
+        vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
+        val bitmap = Bitmap.createBitmap(
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        vectorDrawable.draw(canvas)
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
+
+    private fun showLocationOnMap(lat: Double, lng: Double) {
+        googleMap?.let { map ->
+            val location = LatLng(lat, lng)
+            map.clear()
+
+            // Add marker at the location
+            map.addMarker(
+                MarkerOptions()
+                    .position(location)
+                    .title("Lokasi Terpilih")
+                    .icon(bitmapDescriptorFromVector(R.drawable.ic_map_marker))
+            )
+
+            // Move camera to the location with zoom
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
+
+            // Show the map container
+            locationPreviewContainer.visibility = View.VISIBLE
+            locationPreviewPlaceholder.visibility = View.GONE
+            mapView.visibility = View.VISIBLE
+        }
+    }
+
     private fun updateLocationUi(lat: Double, lng: Double) {
         // Update class variables
         latitude = lat
@@ -637,12 +756,8 @@ class FormActivity : AppCompatActivity() {
         // Show the location preview container
         locationPreviewContainer.visibility = View.VISIBLE
 
-        // Create a static map URL (simplified for this example)
-        // In a real app, you'd load an actual map or use static maps API
-
-        // For now just show the coordinates
-        locationPreviewPlaceholder.visibility = View.VISIBLE
-        locationPreviewPlaceholder.text = "Lokasi: $lat, $lng"
+        // Show location on map
+        showLocationOnMap(lat, lng)
 
         // Mark that form has changed
         formChanged = true
@@ -660,14 +775,72 @@ class FormActivity : AppCompatActivity() {
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getCurrentLocation()
                 } else {
-                    Toast.makeText(
-                        this,
-                        "Izin lokasi diperlukan untuk fitur ini",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    // Show dialog explaining why location is needed and guide to settings
+                    AlertDialog.Builder(this)
+                        .setTitle("Izin Lokasi Diperlukan")
+                        .setMessage("Aplikasi memerlukan izin lokasi untuk menampilkan lokasi Anda di peta. Silakan aktifkan di pengaturan aplikasi.")
+                        .setPositiveButton("Pengaturan") { _, _ ->
+                            // Open app settings
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            val uri = Uri.fromParts("package", packageName, null)
+                            intent.data = uri
+                            startActivity(intent)
+                        }
+                        .setNegativeButton("Batal") { dialog, _ ->
+                            dialog.dismiss()
+                            Toast.makeText(
+                                this,
+                                "Fitur ini memerlukan akses lokasi",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        .setCancelable(false)
+                        .show()
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        var mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY)
+        if (mapViewBundle == null) {
+            mapViewBundle = Bundle()
+            outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle)
+        }
+
+        mapView.onSaveInstanceState(mapViewBundle)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -682,6 +855,18 @@ class FormActivity : AppCompatActivity() {
             // Update UI with the selected location
             updateLocationUi(selectedLatitude, selectedLongitude)
             locationAddressEditText.setText(selectedAddress)
+        }
+        else if (requestCode == LOCATION_SETTINGS_REQUEST_CODE) {
+            // Check if location is now enabled after returning from settings
+            if (isLocationEnabled()) {
+                requestLocationPermissions() // This will now proceed to check permissions
+            } else {
+                Toast.makeText(
+                    this,
+                    "Lokasi masih tidak aktif. Beberapa fitur mungkin tidak berfungsi.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 
