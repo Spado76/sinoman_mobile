@@ -1,10 +1,12 @@
 package com.example.sinoman
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
@@ -45,6 +47,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Set up clickable UTDI logo
+        setupUtdiLogoClickListener()
+
         aboutButton.setOnClickListener {
             // Navigate to about screen
             val intent = Intent(this, AboutActivity::class.java)
@@ -76,6 +81,25 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e("LoginActivity", "Error starting DashboardActivity", e)
             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun setupUtdiLogoClickListener() {
+        val utdiLogoContainer: FrameLayout = findViewById(R.id.utdiLogoawal)
+
+        utdiLogoContainer.setOnClickListener {
+            try {
+                // Open UTDI website in browser
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://utdi.ac.id/"))
+                startActivity(intent)
+            } catch (e: Exception) {
+                // Handle any errors (like no browser installed)
+                Toast.makeText(
+                    this,
+                    "Tidak dapat membuka website: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 }
